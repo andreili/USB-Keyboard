@@ -1,21 +1,25 @@
 #include "hid_proc.h"
-
-#define KBR_MAX_NBR_PRESSED 10
+#include "cmsis_os.h"
 
 uint16_t keys_pressed[KBR_MAX_NBR_PRESSED];
+SemaphoreHandle_t usb_kbd_fill_sem = NULL;
 
-static void  KEYBRD_Init (void)
+void  KEYBRD_Init(void)
 {
 	for (int i=0 ; i<KBR_MAX_NBR_PRESSED ; ++i)
 		keys_pressed[i] = 0;
+	
+	usb_kbd_fill_sem = xSemaphoreCreateMutex();
 }
 
-static void KEYBRD_Decode(uint8_t *pbuf, uint16_t length)
+void KEYBRD_Decode(uint8_t *pbuf, uint16_t length)
 {
+	xSemaphoreTake(usb_kbd_fill_sem, 10);
 	uint16_t i;
 	uint16_t pressed_count = 0;
 	
 	uint16_t ctrl_keys = pbuf[0] << 8;
+	ctrl_keys = (ctrl_keys & 0x0f00) | ((ctrl_keys & 0xf000) >> 4);
 	
 	for (i=0 ; i<KBR_MAX_NBR_PRESSED ; ++i)
 		keys_pressed[i] = 0;
@@ -25,6 +29,7 @@ static void KEYBRD_Decode(uint8_t *pbuf, uint16_t length)
 		if (pbuf[i] >= KEY_A)
 			keys_pressed[pressed_count++] = ctrl_keys | pbuf[i];
 	}
+	xSemaphoreGive(usb_kbd_fill_sem);
 }
 
 HID_cb_TypeDef HID_KEYBRD_cb= 
@@ -33,11 +38,11 @@ HID_cb_TypeDef HID_KEYBRD_cb=
   KEYBRD_Decode
 };
 
-static void  MOUSE_Init ( void)
+void  MOUSE_Init(void)
 {
 }
 
-static void  MOUSE_Decode(uint8_t *data, uint16_t length)
+void  MOUSE_Decode(uint8_t *data, uint16_t length)
 {
   /*HID_MOUSE_Data.button = data[0];
 

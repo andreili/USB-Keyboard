@@ -4,7 +4,7 @@
 #include "usbh_usr.h"
 #include "usbh_hid_core.h"
 
-#define KBR_MAX_NBR_PRESSED 10
+#define KBR_MAX_NBR_PRESSED 6
 
 extern uint16_t keys_pressed[KBR_MAX_NBR_PRESSED];
 

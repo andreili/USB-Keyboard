@@ -1,5 +1,8 @@
 #include "kbd_matrix.h"
 #include "stm32f4xx.h"
+#include "kbd_matrix_data.h"
+#include "hid_proc.h"
+#include "cmsis_os.h"
 
 /*
 * GPIO map:
@@ -8,6 +11,10 @@
 *
 *
 */
+
+uint16_t kbd_data[KBD_MATRIX_ROW];
+SemaphoreHandle_t matrix_fill_sem = NULL;
+extern SemaphoreHandle_t usb_kbd_fill_sem;
 
 uint16_t proc_row(uint16_t col_data)
 {
@@ -37,9 +44,60 @@ void init_matrix(void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
   GPIO_Init(GPIOE, &GPIO_InitStructure);
+	
+	matrix_fill_sem = xSemaphoreCreateMutex();
+}
+
+void fill_matrix(uint32_t mode)
+{
+	xSemaphoreTake(matrix_fill_sem, 10);
+	
+	uint16_t* kbd_matrix = kbd_mc7007;
+	/*switch (mode)
+	{
+		default:
+		case SW_MODE_RK86:
+			kbd_matrix = kbd_rk86;
+			break;
+		case SW_MODE_MC7007:
+			kbd_matrix = kbd_mc7007;
+			break;
+	}*/
+		
+	for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
+		kbd_data[i] = 0;
+	
+	for (int i=0 ; i<KBR_MAX_NBR_PRESSED ; ++i)
+	{
+		uint16_t key = keys_pressed[i];
+		uint16_t alt_keys = (key & 0xff00) >> 8;
+		uint16_t key_sc = keys_pressed[i] & 0x00ff;
+		
+		if (key_sc == 0)
+			continue;
+		
+		for (int r=0 ; r<KBD_MATRIX_ROW ; ++r)
+		{
+			int row_offs = r * KBD_MATRIX_ROW;
+			uint16_t row_d = kbd_data[r];
+			
+			for (int c=0 ; c<KBD_MATRIX_COL ; ++c)
+			{
+				int idx = row_offs + c;
+				if (/*(kbd_matrix[r][c] == alt_keys) ||*/ (kbd_matrix[idx] == key_sc))
+					row_d |= (1 << c);
+			}
+			
+			kbd_data[r] = row_d;
+		}
+	}
+	
+	xSemaphoreGive(matrix_fill_sem);
 }
 
 void proc_matrix(void)
 {
+	xSemaphoreTake(matrix_fill_sem, 10);
 	//
+	xSemaphoreGive(matrix_fill_sem);
 }

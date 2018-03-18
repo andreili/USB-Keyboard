@@ -59,8 +59,7 @@ void led_init(void)
 #define SW_CFG_VV55		0x04
 #define SW_CFG_UNUSED	0x08
 
-#define SW_MODE_RK86		0x01
-#define SW_MODE_MC7007	0x02
+uint32_t sw_cfg, sw_mode;
 
 void sw_init(void)
 {
@@ -118,13 +117,22 @@ int main(void)
 	sw_init();
 	config_SYSTICK();
 	
-  osThreadDef(USBTask, task_USB, osPriorityAboveNormal, 0, 128);
+	// get configuration
+	sw_cfg = (GPIOC->IDR & 0x0f);
+	sw_mode = ((GPIOA->IDR & 0xff) < 4);
+	
+  osThreadDef(USBTask, task_USB, osPriorityNormal, 0, 128);
   USBTaskHandle = osThreadCreate(osThread(USBTask), NULL);
 
-  osThreadDef(MatrixTask, task_matrix, osPriorityNormal, 0, 128);
-  MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
+	if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_MATRIX)
+	{
+		// Initialize a needed GPIO & etc.
+		init_matrix();
+		osThreadDef(MatrixTask, task_matrix, osPriorityNormal, 0, 128);
+		MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
+	}
 
-  osThreadDef(GUITask, task_GUI, osPriorityNormal, 0, 512);
+  osThreadDef(GUITask, task_GUI, osPriorityBelowNormal, 0, 512);
   GUITaskHandle = osThreadCreate(osThread(GUITask), NULL);
 
   osThreadDef(PS2Task, task_ps2, osPriorityBelowNormal, 0, 128);
@@ -136,9 +144,7 @@ int main(void)
 }
 
 void task_USB(void const * argument)
-{
-	__IO uint32_t sw_cfg, sw_mode;
-	
+{	
  // MX_USB_HOST_Init();
 	
 #ifdef ENABLE_USB_BOOT
@@ -159,14 +165,6 @@ void task_USB(void const * argument)
 	}
 #endif
 	
-	// get configureation
-	sw_cfg = get_sw_cfg();
-	sw_mode = get_sw_mode();
-	
-	// Initialization needed GPIO & etc.
-	if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_MATRIX)
-		init_matrix();
-	
   /* Init Host Library */
   USBH_Init(&USB_OTG_Core, 
 #ifdef USE_USB_OTG_FS
@@ -181,6 +179,8 @@ void task_USB(void const * argument)
   while (1)
   {
     USBH_Process(&USB_OTG_Core , &USB_Host);
+		// fill keyboard matrix
+		fill_matrix(sw_mode);
 		
 		if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_MATRIX)
 			proc_matrix();
@@ -201,6 +201,7 @@ void task_GUI(void const * argument)
 
 void task_matrix(void const * argument)
 {
+	init_matrix();
   for(;;)
   {
     osDelay(1);
