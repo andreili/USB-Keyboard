@@ -10,6 +10,8 @@
 //#define ENABLE_USB_BOOT
 //#define ENABLE_PS2
 
+#define USE_GUI
+
 void GUI_X_Init(void)
 {
 }
@@ -132,8 +134,10 @@ int main(void)
 		MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
 	}
 
+	#ifdef USE_GUI
   osThreadDef(GUITask, task_GUI, osPriorityBelowNormal, 0, 512);
   GUITaskHandle = osThreadCreate(osThread(GUITask), NULL);
+	#endif
 
   osThreadDef(PS2Task, task_ps2, osPriorityBelowNormal, 0, 128);
   PS2TaskHandle = osThreadCreate(osThread(PS2Task), NULL);
