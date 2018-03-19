@@ -66,7 +66,7 @@ void main_GUI(void)
 	
 	while (1)
 	{		
-		MX_BIT_1_ON();
+		LED_3_ON();
 		
 		sprintf(buf, "HID: %04X %04X %04X %04X %04X %04X", keys_pressed[0], keys_pressed[1], 
 				keys_pressed[2], keys_pressed[3], keys_pressed[4], keys_pressed[5]);
@@ -95,7 +95,7 @@ void main_GUI(void)
 			GUI_Text(250, 20 + i * 18, buf, White, Black);
 		}
 		
-		MX_BIT_1_OFF();
+		LED_3_OFF();
 		
     osDelay(100);
 	}

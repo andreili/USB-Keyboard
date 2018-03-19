@@ -130,10 +130,8 @@ int main(void)
 
 	if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_MATRIX)
 	{
-		// Initialize a needed GPIO & etc.
-		init_matrix();
-		//osThreadDef(MatrixTask, task_matrix, osPriorityNormal, 0, 128);
-		//MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
+		osThreadDef(MatrixTask, task_matrix, osPriorityNormal, 0, 128);
+		MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
 	}
 
 	#ifdef USE_GUI
@@ -141,8 +139,11 @@ int main(void)
   GUITaskHandle = osThreadCreate(osThread(GUITask), NULL);
 	#endif
 
-  osThreadDef(PS2Task, task_ps2, osPriorityBelowNormal, 0, 128);
-  PS2TaskHandle = osThreadCreate(osThread(PS2Task), NULL);
+	if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_PS2)
+	{
+		osThreadDef(PS2Task, task_ps2, osPriorityBelowNormal, 0, 128);
+		PS2TaskHandle = osThreadCreate(osThread(PS2Task), NULL);
+	}
 	
   osKernelStart();
 	
@@ -185,22 +186,10 @@ void task_USB(void const * argument)
 	
   while (1)
   {
-		MX_BIT_3_ON();
-		
     USBH_Process(&USB_OTG_Core , &USB_Host);
 		// fill keyboard matrix
-		fill_matrix(sw_mode);
-		
-		if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_MATRIX)
-			proc_matrix();
-		#ifdef ENABLE_PS2
-		if ((sw_cfg & SW_CFG_PS2) == SW_CFG_PS2)
-			proc_ps2();
-		#endif 
-		
-		MX_BIT_3_OFF();
-		
-    osDelay(10);     
+		fill_matrix(sw_mode);		
+    osDelay(5);     
   }
 }
 
@@ -215,17 +204,22 @@ void task_matrix(void const * argument)
 	init_matrix();
   for(;;)
   {
+		LED_4_ON();
 		proc_matrix();
+		LED_4_OFF();
+		osDelay(0);
   }
 }
 
+#ifdef ENABLE_PS2
 void task_ps2(void const * argument)
 {
   for(;;)
   {
-    osDelay(1);
+		proc_ps2();
   }
 }
+#endif 
 
 
 #ifdef USE_FULL_ASSERT

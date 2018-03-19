@@ -506,7 +506,6 @@ __inline void LCD_WriteData(uint16_t data)
 
 void LCD_fill_mem(void)
 {
-	MX_BIT_5_ON();
 	int32_t x, y;
 	LCD_SetCursor(0,0);
 	LCD_WriteIndex(0x0022);
@@ -524,7 +523,6 @@ void LCD_fill_mem(void)
 			}
 		}
 	}
-	MX_BIT_5_OFF();
 }
 
 void LCD_clear(void)
