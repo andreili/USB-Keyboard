@@ -66,17 +66,14 @@ void main_GUI(void)
 			{
 				int x = 16 + MATRIXCELL_SIZE_X * j;
 				int y = 47 + MATRIXCELL_SIZE_Y * i;
-				draw_cross(x, y, White);
-				//GUI_ClearRect(x, y, x + MATRIXCELL_SIZE_X, y + MATRIXCELL_SIZE_Y);
-				//LCD_DrawLine(x+2, y+2, x + MATRIXCELL_SIZE_X - 2, y + MATRIXCELL_SIZE_Y - 2, White);
-				/*if (kbd_data[i] & (1 << j))
+				if (kbd_data[i] & (1 << j))
 				{
-					//GUI_FillRect(x, y, x + MATRIXCELL_SIZE_X, y + MATRIXCELL_SIZE_Y);
+					draw_cross(x, y, White);
 				}
 				else
 				{
-					//GUI_DrawRect(x, y, x + MATRIXCELL_SIZE_X, y + MATRIXCELL_SIZE_Y);
-				}*/
+					draw_cross(x, y, Black);
+				}
 			}
 		}
 		

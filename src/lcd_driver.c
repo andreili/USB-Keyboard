@@ -371,7 +371,39 @@ void LCD_Initializtion(void)
 
 	LCD_WriteReg(0x0020,0x0000);
 	LCD_WriteReg(0x0021,0x0000);					
-	osDelay(50);   /* delay 50 ms */		
+	osDelay(50);   /* delay 50 ms */	
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
+ 
+	TIM_TimeBaseInitTypeDef timerInitStructure; 
+	timerInitStructure.TIM_Prescaler = (SystemCoreClock / 4) / 1000;
+	timerInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	timerInitStructure.TIM_Period = 200;
+	timerInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+	timerInitStructure.TIM_RepetitionCounter = 0;
+	TIM_TimeBaseInit(TIM5, &timerInitStructure);
+	TIM_Cmd(TIM5, ENABLE);
+	
+	TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);
+	
+	NVIC_InitTypeDef nvicStructure;
+	nvicStructure.NVIC_IRQChannel = TIM5_IRQn;
+	nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	nvicStructure.NVIC_IRQChannelSubPriority = 1;
+	nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&nvicStructure);
+}
+
+void TIM5_IRQHandler(void)
+{
+	/*LCD_SetCursor(0,0);
+	LCD_WriteIndex(0x0022);
+	LCD_RAM = 0;*/
+	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+		LCD_fill_mem();
+	}
 }
 
 /******************************************************************************
