@@ -3,6 +3,7 @@
 #include "LCD_Protected.h"
 #include "GUI.h"
 #include "cmsis_os.h"
+#include "kbd_matrix.h"
 
 // ILI9325
 
@@ -618,6 +619,7 @@ __inline void LCD_WriteData(uint16_t data)
 
 void LCD_fill_mem(void)
 {
+	MX_BIT_5_ON();
 	int32_t x, y;
 	LCD_SetCursor(0,0);
 	LCD_WriteIndex(0x0022);
@@ -635,4 +637,5 @@ void LCD_fill_mem(void)
 			}
 		}
 	}
+	MX_BIT_5_OFF();
 }

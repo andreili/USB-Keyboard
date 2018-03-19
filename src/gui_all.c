@@ -54,7 +54,7 @@ void main_GUI(void)
 	
 	while (1)
 	{		
-		LED_3_ON();
+		MX_BIT_1_ON();
 		
 		sprintf(buf, "HID scancodes: %04X %04X %04X %04X %04X %04X", keys_pressed[0], keys_pressed[1], 
 				keys_pressed[2], keys_pressed[3], keys_pressed[4], keys_pressed[5]);
@@ -87,8 +87,7 @@ void main_GUI(void)
 		}
 		
 		WM_Exec();
-		LCD_fill_mem();
-		LED_3_OFF();
+		MX_BIT_1_OFF();
 		
     osDelay(100);
 	}

@@ -182,7 +182,7 @@ void task_USB(void const * argument)
 	
   while (1)
   {
-		LED_4_ON();
+		MX_BIT_3_ON();
 		
     USBH_Process(&USB_OTG_Core , &USB_Host);
 		// fill keyboard matrix
@@ -195,7 +195,7 @@ void task_USB(void const * argument)
 			proc_ps2();
 		#endif 
 		
-		LED_4_OFF();
+		MX_BIT_3_OFF();
 		
     osDelay(10);     
   }
