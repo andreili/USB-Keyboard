@@ -82,8 +82,6 @@ int boot_OK = 0;
 
 int USBH_USR_MS_Application(void)
 {
-  const uint8_t writeTextBuff[] = "STM32 Connectivity line Host Demo application using FAT_FS   ";
-  uint16_t bytesWritten, bytesToWrite;
   
   switch(USBH_USR_ApplicationState)
   {

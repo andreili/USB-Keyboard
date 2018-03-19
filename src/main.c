@@ -215,7 +215,7 @@ void task_matrix(void const * argument)
 	init_matrix();
   for(;;)
   {
-    osDelay(1);
+		proc_matrix();
   }
 }
 

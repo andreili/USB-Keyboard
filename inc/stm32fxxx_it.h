@@ -70,6 +70,14 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
+	 
+void EXTI1_IRQHandler(void);
+void TIM2_IRQHandler(void);
+#ifdef USE_USB_OTG_FS
+void OTG_FS_IRQHandler(void);
+#else
+void OTG_HS_IRQHandler(void);
+#endif
 
 #ifdef __cplusplus
 }

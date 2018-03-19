@@ -311,7 +311,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>5</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -320,7 +320,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>1</wLevel>
+            <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>0</uC99>
@@ -332,7 +332,7 @@
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>-Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-undef -Wno-packed -Wno-sign-conversion -Wno-conversion -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-unused-parameter -Wno-unused-function</MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F4XX,__GNUC__</Define>
               <Undefine></Undefine>
               <IncludePath>.\inc;.\libs\CMSIS\Device\ST\STM32F4xx\Include;.\libs\CMSIS\Include;.\libs\STM32F4xx_StdPeriph_Driver\inc;.\libs\STM32_USB_HOST_Library\Core\inc;.\libs\STM32_USB_HOST_Library\Class\HID\inc;.\libs\STM32_USB_OTG_Driver\inc;.\libs\fat_fs\inc;.\libs\STM32_USB_HOST_Library\Class\MSC\inc;.\libs\STM32_USB_Device_Library\Class\msc\inc;.\libs\STM32_USB_Device_Library\Core\inc;.\libs\uCGUI_LIB\GLCD;.\libs\uCGUI_LIB\uCGUI\Core;.\libs\uCGUI_LIB\uCGUI\WM;.\libs\uCGUI_LIB\uCGUI\Config;.\libs\uCGUI_LIB\uCGUI\Widget;.\libs\FreeRTOS\include;.\libs\FreeRTOS\CMSIS_RTOS;.\libs\FreeRTOS\portable\RVDS\ARM_CM4F;.\libs\MakiseGUI;.\libs\MakiseGUI\fonts;.\libs\MakiseGUI\gui;.\libs\MakiseGUI\gui\styles;.\libs\MakiseGUI\gui\elements;.\libs\MakiseGUI\gui\elements\inc</IncludePath>

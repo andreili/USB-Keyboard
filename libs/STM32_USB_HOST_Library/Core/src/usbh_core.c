@@ -355,7 +355,7 @@ void USBH_Process(USB_OTG_CORE_HANDLE *pdev , USBH_HOST *phost)
     
     break;
     
-  default :
+  case HOST_DETECT_DEVICE_SPEED :
     break;
   }
 
@@ -569,9 +569,6 @@ static USBH_Status USBH_HandleEnum(USB_OTG_CORE_HANDLE *pdev, USBH_HOST *phost)
   case ENUM_DEV_CONFIGURED:
     /* user callback for enumeration done */
     Status = USBH_OK;
-    break;
-    
-  default:
     break;
   }  
   return Status;
@@ -827,7 +824,9 @@ USBH_Status USBH_HandleControl (USB_OTG_CORE_HANDLE *pdev, USBH_HOST *phost)
     }
     break;
     
-  default:
+  case CTRL_IDLE:
+  case CTRL_STALLED:
+  case CTRL_COMPLETE:
     break;
   }
   return status;

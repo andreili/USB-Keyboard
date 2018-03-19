@@ -312,15 +312,12 @@ uint16_t LCD_GetPoint(uint16_t Xpos,uint16_t Ypos)
 void LCD_SetPoint(uint16_t Xpos,uint16_t Ypos,uint16_t point)
 {
 	if( Xpos >= MAX_X || Ypos >= MAX_Y )
-	{
 		return;
-	}
-	//LCD_SetCursor(Xpos,Ypos);
-	//LCD_WriteReg(0x0022,point);
-	Ypos = MAX_Y - Ypos;
 	
+	Ypos = MAX_Y - Ypos;
 	int Yof = Ypos >> 4;
 	int Ybt = Ypos & 0xf; 
+	
 	if (point >= 0x7777)
 		lcd_buff[Xpos][Yof] |= (1 << Ybt);
 	else
@@ -540,23 +537,19 @@ void LCD_clear(void)
 void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor )
 {
 	uint16_t i, j;
-    uint8_t buffer[16], tmp_char;
-    GetASCIICode(buffer,ASCI);
-    for( i=0; i<16; i++ )
-    {
-        tmp_char = buffer[i];
-        for( j=0; j<8; j++ )
-        {
-            if( (tmp_char >> 7 - j) & 0x01 == 0x01 )
-            {
-                LCD_SetPoint( Xpos + j, Ypos + i, charColor );
-            }
-            else
-            {
-                LCD_SetPoint( Xpos + j, Ypos + i, bkColor );
-            }
-        }
-    }
+	uint8_t buffer[16], tmp_char;
+	GetASCIICode(buffer,ASCI);
+	for( i=0; i<16; i++ )
+	{
+			tmp_char = buffer[i];
+			for( j=0; j<8; j++ )
+			{
+					if( ((tmp_char >> (7 - j)) & 0x01) == 0x01 )
+							LCD_SetPoint(Xpos + j, Ypos + i, charColor);
+					else
+							LCD_SetPoint(Xpos + j, Ypos + i, bkColor);
+			}
+	}
 }
 
 void GUI_Text(uint16_t Xpos, uint16_t Ypos, char *str,uint16_t Color, uint16_t bkColor)

@@ -228,8 +228,8 @@ typedef struct _Host_TypeDef
   
   USBH_Device_TypeDef   device_prop; 
   
-  USBH_Class_cb_TypeDef               *class_cb;  
-  USBH_Usr_cb_TypeDef  	              *usr_cb;
+  const USBH_Class_cb_TypeDef               *class_cb;  
+  const USBH_Usr_cb_TypeDef  	              *usr_cb;
 
   
 } USBH_HOST, *pUSBH_HOST;

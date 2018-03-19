@@ -3,6 +3,7 @@
 #include "hid_proc.h"
 #include "kbd_matrix.h"
 #include "lcd_driver.h"
+#include <stdio.h>
 
 void init_GUI(void)
 {
@@ -90,7 +91,7 @@ void main_GUI(void)
 		
 		for (int i=0 ; i<12 ; ++i)
 		{
-			sprintf(buf, "%i=%04X", i, kbd_data[i]);
+			sprintf(buf, "%02i=%04X", i, kbd_data[i]);
 			GUI_Text(250, 20 + i * 18, buf, White, Black);
 		}
 		
