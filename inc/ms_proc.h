@@ -7,6 +7,6 @@
 #include "usbh_msc_scsi.h"
 #include "usbh_msc_bot.h"
 
-extern USBH_Usr_cb_TypeDef USR_MS_cb;
+extern const USBH_Usr_cb_TypeDef USR_MS_cb;
 
 #endif

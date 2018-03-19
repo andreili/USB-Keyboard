@@ -82,7 +82,7 @@ int boot_OK = 0;
 
 int USBH_USR_MS_Application(void)
 {
-  uint8_t writeTextBuff[] = "STM32 Connectivity line Host Demo application using FAT_FS   ";
+  const uint8_t writeTextBuff[] = "STM32 Connectivity line Host Demo application using FAT_FS   ";
   uint16_t bytesWritten, bytesToWrite;
   
   switch(USBH_USR_ApplicationState)
@@ -108,16 +108,8 @@ int USBH_USR_MS_Application(void)
     }
     
     f_mount(0, &fatfs);
-    
-    if (f_open(&file, "0:STM32.TXT",FA_CREATE_ALWAYS | FA_WRITE) == FR_OK) { 
-      /* Write buffer to file */
-      bytesToWrite = sizeof(writeTextBuff); 
-      f_write (&file, writeTextBuff, bytesToWrite, (void *)&bytesWritten);   
-      
-      /*close file and filesystem*/
-      f_close(&file);
-      f_mount(0, NULL); 
-    }
+		
+    f_mount(0, NULL); 
 		boot_OK = 1;
 
     USBH_USR_ApplicationState = USH_USR_FS_DRAW; 
@@ -136,7 +128,7 @@ void USBH_USR_MS_DeInit(void)
   USBH_USR_ApplicationState = USH_USR_FS_INIT;
 }
 
-USBH_Usr_cb_TypeDef USR_MS_cb =
+const USBH_Usr_cb_TypeDef USR_MS_cb =
 {
   USBH_USR_MS_Init,
   USBH_USR_MS_DeInit,

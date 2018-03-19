@@ -14,19 +14,19 @@
 / Function and Buffer Configurations
 /----------------------------------------------------------------------------*/
 
-#define	_FS_TINY	0		/* 0 or 1 */
+#define	_FS_TINY	1		/* 0 or 1 */
 /* When _FS_TINY is set to 1, FatFs uses the sector buffer in the file system
 /  object instead of the sector buffer in the individual file object for file
 /  data transfer. This reduces memory consumption 512 bytes each file object. */
 
 
-#define _FS_READONLY	0	/* 0 or 1 */
+#define _FS_READONLY	1	/* 0 or 1 */
 /* Setting _FS_READONLY to 1 defines read only configuration. This removes
 /  writing functions, f_write, f_sync, f_unlink, f_mkdir, f_chmod, f_rename,
 /  f_truncate and useless f_getfree. */
 
 
-#define _FS_MINIMIZE	0	/* 0, 1, 2 or 3 */
+#define _FS_MINIMIZE	3	/* 0, 1, 2 or 3 */
 /* The _FS_MINIMIZE option defines minimization level to remove some functions.
 /
 /   0: Full function.
@@ -36,11 +36,11 @@
 /   3: f_lseek is removed in addition to level 2. */
 
 
-#define	_USE_STRFUNC	2	/* 0, 1 or 2 */
+#define	_USE_STRFUNC	0	/* 0, 1 or 2 */
 /* To enable string functions, set _USE_STRFUNC to 1 or 2. */
 
 
-#define	_USE_MKFS	1		/* 0 or 1 */
+#define	_USE_MKFS	0		/* 0 or 1 */
 /* To enable f_mkfs function, set _USE_MKFS to 1 and set _FS_READONLY to 0 */
 
 
@@ -116,7 +116,7 @@
 / Physical Drive Configurations
 /----------------------------------------------------------------------------*/
 
-#define _DRIVES		2
+#define _DRIVES		1
 /* Number of volumes (logical drives) to be used. */
 
 
