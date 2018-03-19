@@ -6,7 +6,7 @@
 
 /*
 * GPIO map:
-*		PE00-PE11 - input
+*		PB00-PB11 - input
 *		PC04-PC15 - output
 *
 *
@@ -48,11 +48,20 @@ void init_matrix(void)
 	matrix_fill_sem = xSemaphoreCreateMutex();
 }
 
+#define CHECK_MTX(scancode, matrix) \
+	{ \
+		if (matrix[scancode]->row != 0x0000) \
+		{ \
+			kbd_data[matrix[scancode]->row] |= matrix[scancode]->col; \
+		} \
+	}
+
 void fill_matrix(uint32_t mode)
 {
 	xSemaphoreTake(matrix_fill_sem, 10);
 	
-	uint16_t* kbd_matrix = kbd_mc7007;
+	const key_mtx_t* kbd_matrix = kbd_mc7007;
+	const key_mtx_t* kbd_matrix_f = kbd_mc7007_f;
 	/*switch (mode)
 	{
 		default:
@@ -67,29 +76,19 @@ void fill_matrix(uint32_t mode)
 	for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
 		kbd_data[i] = 0;
 	
+	if (keys_pressed[0] != 0)
+	{
+		CHECK_MTX(((keys_pressed[0] & 0xff00) >> 8), (&kbd_matrix_f));
+	}
+	
 	for (int i=0 ; i<KBR_MAX_NBR_PRESSED ; ++i)
 	{
-		uint16_t key = keys_pressed[i];
-		uint16_t alt_keys = (key & 0xff00) >> 8;
 		uint16_t key_sc = keys_pressed[i] & 0x00ff;
 		
 		if (key_sc == 0)
 			continue;
 		
-		for (int r=0 ; r<KBD_MATRIX_ROW ; ++r)
-		{
-			int row_offs = r * KBD_MATRIX_ROW;
-			uint16_t row_d = kbd_data[r];
-			
-			for (int c=0 ; c<KBD_MATRIX_COL ; ++c)
-			{
-				int idx = row_offs + c;
-				if (/*(kbd_matrix[r][c] == alt_keys) ||*/ (kbd_matrix[idx] == key_sc))
-					row_d |= (1 << c);
-			}
-			
-			kbd_data[r] = row_d;
-		}
+		CHECK_MTX(key_sc, (&kbd_matrix));
 	}
 	
 	xSemaphoreGive(matrix_fill_sem);
