@@ -113,6 +113,8 @@ void task_GUI(void const * argument);
 void task_matrix(void const * argument);
 void task_ps2(void const * argument);
 
+int dev_mode = 0;
+
 int main(void)
 {
 	led_init();
@@ -130,8 +132,8 @@ int main(void)
 	{
 		// Initialize a needed GPIO & etc.
 		init_matrix();
-		osThreadDef(MatrixTask, task_matrix, osPriorityNormal, 0, 128);
-		MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
+		//osThreadDef(MatrixTask, task_matrix, osPriorityNormal, 0, 128);
+		//MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
 	}
 
 	#ifdef USE_GUI
@@ -148,8 +150,8 @@ int main(void)
 }
 
 void task_USB(void const * argument)
-{	
- // MX_USB_HOST_Init();
+{
+	dev_mode = 0;
 	
 #ifdef ENABLE_USB_BOOT
   USBH_Init(&USB_OTG_Core, 
@@ -165,9 +167,10 @@ void task_USB(void const * argument)
   {
     USBH_Process(&USB_OTG_Core , &USB_Host);
     osDelay(1);
-		break;
 	}
 #endif
+	
+	dev_mode = 1;
 	
   /* Init Host Library */
   USBH_Init(&USB_OTG_Core, 

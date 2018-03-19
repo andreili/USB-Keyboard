@@ -30,7 +30,7 @@
 
 #define RGB565CONVERT(red, green, blue) (int) (((red >> 3) << 11) | ((green >> 2) << 5) | (blue >> 3))
 
-void LCD_Initializtion(void);
+void LCD_Initialization(void);
 uint16_t LCD_GetPoint(uint16_t Xpos,uint16_t Ypos);
 void LCD_SetPoint(uint16_t Xpos,uint16_t Ypos,uint16_t point);
 void LCD_DrawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
@@ -40,6 +40,9 @@ void LCD_WriteData(uint16_t data);
 void LCD_WriteReg(uint16_t LCD_Reg,uint16_t LCD_RegValue);
 void LCD_SetCursor( uint16_t Xpos, uint16_t Ypos );
 uint16_t LCD_ReadData(void);
+void LCD_clear(void);
 void LCD_fill_mem(void);
+
+void GUI_Text(uint16_t Xpos, uint16_t Ypos, char *str,uint16_t Color, uint16_t bkColor);
 	
 #endif

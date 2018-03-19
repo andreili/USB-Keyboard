@@ -1,9 +1,7 @@
 #include "lcd_driver.h"
-#include "LCD_ConfDefaults.h"            /* Configuration header file */
-#include "LCD_Protected.h"
-#include "GUI.h"
 #include "cmsis_os.h"
 #include "kbd_matrix.h"
+#include "AsciiLib.h"
 
 // ILI9325
 
@@ -16,145 +14,6 @@
 #define   COLOR LCD_COLORINDEX
 
 uint16_t lcd_buff[MAX_X][BUF_MAX_Y];
-
-extern GUI_CONTEXT GUI_Context;
-
-#if (LCD_BITSPERPIXEL <= 8) && (GUI_NUM_LAYERS < 2)
-  #define LCD_BKCOLORINDEX GUI_Context.LCD.aColorIndex8[0]
-  #define LCD_COLORINDEX   GUI_Context.LCD.aColorIndex8[1]
-  #define LCD_ACOLORINDEX  GUI_Context.LCD.aColorIndex8
-#else
-  #define LCD_BKCOLORINDEX GUI_Context.LCD.aColorIndex16[0]
-  #define LCD_COLORINDEX   GUI_Context.LCD.aColorIndex16[1]
-  #define LCD_ACOLORINDEX  GUI_Context.LCD.aColorIndex16
-#endif
-
-extern LCD_PIXELINDEX LCD__aConvTable[LCD_MAX_LOG_COLORS];
-
-int LCD_L0_Init(void)
-{
-  LCD_Initializtion();
-  return 0;
-}
-
-void LCD_L0_SetPixelIndex(int x, int y, int PixelIndex)
-{
-  LCD_SetPoint(x,y,PixelIndex);
-}
-
-unsigned int LCD_L0_GetPixelIndex(int x, int y)
-{
-  return LCD_GetPoint(x,y);
-}
-
-void LCD_L0_SetOrg(int x,int y)
-{
-}
-
-void LCD_L0_XorPixel(int x, int y)
-{
-  LCD_PIXELINDEX Index = LCD_GetPoint(x,y);
-  LCD_SetPoint(x,y,LCD_NUM_COLORS-1-Index);
-}
-
-void LCD_L0_DrawHLine(int x0, int y,  int x1)
-{
-  LCD_DrawLine(x0,y,x1,y,LCD_COLORINDEX);
-}
-
-void LCD_L0_DrawVLine(int x, int y0,  int y1)
-{
-  LCD_DrawLine(x,y0,x,y1,LCD_COLORINDEX);
-}
-
-void LCD_L0_FillRect(int x0, int y0, int x1, int y1) 
-{
-#if !LCD_SWAP_XY
-  for (; y0 <= y1; y0++) {
-    LCD_L0_DrawHLine(x0,y0, x1);
-  }
-#else
-  for (; x0 <= x1; x0++) {
-    LCD_L0_DrawVLine(x0,y0, y1);
-  }
-#endif
-}
-
-void LCD_L0_On(void)
-{
-}
-
-void DrawBitLine1BPP(int x, int y, U8 const*p, int Diff, int xsize, const LCD_PIXELINDEX*pTrans)
-{
-  LCD_PIXELINDEX pixels;
-  LCD_PIXELINDEX Index0 = *(pTrans+0);
-  LCD_PIXELINDEX Index1 = *(pTrans+1);
-/*
-// Jump to right entry point
-*/
-  pixels = *p;
-
-  WriteTBit0:
-   if (pixels&(1<<7)) LCD_SetPoint(x+0, y, Index1);
-    if (!--xsize)
-      return;
-  WriteTBit1:
-    if (pixels&(1<<6)) LCD_SetPoint(x+1, y, Index1);
-    if (!--xsize)
-      return;
-  WriteTBit2:
-    if (pixels&(1<<5)) LCD_SetPoint(x+2, y, Index1);
-    if (!--xsize)
-      return;
-  WriteTBit3:
-    if (pixels&(1<<4)) LCD_SetPoint(x+3, y, Index1);
-    if (!--xsize)
-      return;
-  WriteTBit4:
-    if (pixels&(1<<3)) LCD_SetPoint(x+4, y, Index1);
-    if (!--xsize)
-      return;
-  WriteTBit5:
-    if (pixels&(1<<2)) LCD_SetPoint(x+5, y, Index1);
-    if (!--xsize)
-      return;
-  WriteTBit6:
-    if (pixels&(1<<1)) LCD_SetPoint(x+6, y, Index1);
-    if (!--xsize)
-      return;
-  WriteTBit7:
-    if (pixels&(1<<0)) LCD_SetPoint(x+7, y, Index1);
-    if (!--xsize)
-      return;
-    x+=8;
-    pixels = *(++p);
-    goto WriteTBit0;
-	
-}
-
-void LCD_L0_DrawBitmap   (int x0, int y0,
-                       int xsize, int ysize,
-                       int BitsPerPixel, 
-                       int BytesPerLine,
-                       const uint8_t* pData, int Diff,
-                       const LCD_PIXELINDEX* pTrans)
-{
-  int i;
-  switch (BitsPerPixel)
-  {
-  case 1:
-    for (i=0; i<ysize; i++)
-    {
-      DrawBitLine1BPP(x0, i+y0, pData, Diff, xsize, pTrans);
-      pData += BytesPerLine;
-    }
-    break;
-  }
-}
-
-void LCD_L0_SetLUTEntry(uint8_t Pos, LCD_COLOR color)
-{
-}
 
 /*******************************************************************************
 * Function Name  : LCD_CtrlLinesConfig
@@ -290,15 +149,14 @@ static void LCD_FSMCConfig(void)
 *******************************************************************************/
 static void LCD_Configuration(void)
 {
-	u32 i=0x1fffff;
 	/* Configure the LCD Control pins --------------------------------------------*/
 	LCD_CtrlLinesConfig();
-	while(i--);
+	osDelay(100);
 	/* Configure the FSMC Parallel interface -------------------------------------*/
 	LCD_FSMCConfig();
 }
 
-void LCD_Initializtion(void)
+void LCD_Initialization(void)
 {
 	LCD_Configuration();
 
@@ -670,4 +528,58 @@ void LCD_fill_mem(void)
 		}
 	}
 	MX_BIT_5_OFF();
+}
+
+void LCD_clear(void)
+{
+	for(int x=0 ; x<MAX_X ; ++x)
+		for(int y=0 ; y<BUF_MAX_Y ; ++y)
+			lcd_buff[x][y] = 0;
+}
+
+void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor )
+{
+	uint16_t i, j;
+    uint8_t buffer[16], tmp_char;
+    GetASCIICode(buffer,ASCI);
+    for( i=0; i<16; i++ )
+    {
+        tmp_char = buffer[i];
+        for( j=0; j<8; j++ )
+        {
+            if( (tmp_char >> 7 - j) & 0x01 == 0x01 )
+            {
+                LCD_SetPoint( Xpos + j, Ypos + i, charColor );
+            }
+            else
+            {
+                LCD_SetPoint( Xpos + j, Ypos + i, bkColor );
+            }
+        }
+    }
+}
+
+void GUI_Text(uint16_t Xpos, uint16_t Ypos, char *str,uint16_t Color, uint16_t bkColor)
+{
+    char TempChar;
+    do
+    {
+        TempChar = *str++;  
+        PutChar( Xpos, Ypos, TempChar, Color, bkColor );    
+        if( Xpos < MAX_X - 8 )
+        {
+            Xpos += 8;
+        } 
+        else if ( Ypos < MAX_Y - 16 )
+        {
+            Xpos = 0;
+            Ypos += 16;
+        }   
+        else
+        {
+            Xpos = 0;
+            Ypos = 0;
+        }    
+    }
+    while ( *str != 0 );
 }

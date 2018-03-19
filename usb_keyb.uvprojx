@@ -418,6 +418,16 @@
               <FileType>1</FileType>
               <FilePath>.\src\gui_all.c</FilePath>
             </File>
+            <File>
+              <FileName>lcd_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\lcd_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>AsciiLib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\AsciiLib.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -572,51 +582,6 @@
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\libs\fat_fs\src\ff.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>uCGUI/GLCD</GroupName>
-          <Files>
-            <File>
-              <FileName>AsciiLib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\libs\uCGUI_LIB\GLCD\AsciiLib.c</FilePath>
-            </File>
-            <File>
-              <FileName>GLCD.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\libs\uCGUI_LIB\GLCD\GLCD.c</FilePath>
-            </File>
-            <File>
-              <FileName>GLCD_UCGUI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\libs\uCGUI_LIB\GLCD\GLCD_UCGUI.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>uCGUI/Config</GroupName>
-          <Files>
-            <File>
-              <FileName>GUIConf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\GUIConf.h</FilePath>
-            </File>
-            <File>
-              <FileName>LCDConf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\LCDConf.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>uCGUI/Lib</GroupName>
-          <Files>
-            <File>
-              <FileName>uCGUI.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>.\libs\uCGUI_LIB\uCGUI.lib</FilePath>
             </File>
           </Files>
         </Group>

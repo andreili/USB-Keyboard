@@ -3,7 +3,7 @@
 
 #define USH_USR_FS_INIT       0
 #define USH_USR_FS_READLIST   1
-#define USH_USR_FS_WRITEFILE  2
+#define USH_USR_FS_READFW		  2
 #define USH_USR_FS_DRAW       3
 
 uint8_t USBH_USR_ApplicationState = USH_USR_FS_INIT;
@@ -78,6 +78,7 @@ void USBH_USR_MS_OverCurrentDetected (void)
 }
 
 extern USB_OTG_CORE_HANDLE           USB_OTG_Core;
+int boot_OK = 0;
 
 int USBH_USR_MS_Application(void)
 {
@@ -93,14 +94,11 @@ int USBH_USR_MS_Application(void)
       /* efs initialisation fails*/
       return(-1);
     }
-    USBH_USR_ApplicationState = USH_USR_FS_READLIST;
+    USBH_USR_ApplicationState = USH_USR_FS_READFW;
     break;
     
-  case USH_USR_FS_READLIST:
-    USBH_USR_ApplicationState = USH_USR_FS_WRITEFILE;
-    break;
-    
-  case USH_USR_FS_WRITEFILE:
+  case USH_USR_FS_READFW:
+		LED_3_ON();
     USB_OTG_BSP_mDelay(100);
 	
     if (USBH_MSC_Param.MSWriteProtect == DISK_WRITE_PROTECTED) 
@@ -120,19 +118,13 @@ int USBH_USR_MS_Application(void)
       f_close(&file);
       f_mount(0, NULL); 
     }
+		boot_OK = 1;
 
     USBH_USR_ApplicationState = USH_USR_FS_DRAW; 
     break;
     
-  case USH_USR_FS_DRAW:  
-    while(HCD_IsDeviceConnected(&USB_OTG_Core))
-    {
-      if ( f_mount( 0, &fatfs ) != FR_OK ) {
-        /* fat_fs initialisation fails*/
-        return(-1);
-      }
-      return 0;
-    }
+  case USH_USR_FS_DRAW:
+		LED_3_OFF();
     break;
   default: break;
   }

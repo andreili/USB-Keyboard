@@ -156,8 +156,8 @@ uint8_t USBH_SOF (USB_OTG_CORE_HANDLE *pdev)
 void USBH_Init(USB_OTG_CORE_HANDLE *pdev,
                USB_OTG_CORE_ID_TypeDef coreID,
                USBH_HOST *phost,               
-               USBH_Class_cb_TypeDef *class_cb, 
-               USBH_Usr_cb_TypeDef *usr_cb)
+               const USBH_Class_cb_TypeDef *class_cb, 
+               const USBH_Usr_cb_TypeDef *usr_cb)
 {
      
   /* Hardware Init */

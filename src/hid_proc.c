@@ -60,12 +60,10 @@ const HID_cb_TypeDef HID_MOUSE_cb =
 
 void USBH_USR_HID_Init(void)
 {
-	LED_3_OFF();
 }
 
 void USBH_USR_HID_DeInit(void)
 {
-	LED_3_OFF();
 }
 
 void USBH_USR_HID_DeviceAttached(void)

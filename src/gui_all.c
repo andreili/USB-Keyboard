@@ -1,21 +1,16 @@
 #include "gui_all.h"
 #include "cmsis_os.h"
-#include <GUI.h>
-#include "WM.h"
-#include "FRAMEWIN.h"
 #include "hid_proc.h"
 #include "kbd_matrix.h"
 #include "lcd_driver.h"
 
 void init_GUI(void)
 {
-	GUI_Init();
+	LCD_Initialization();
 }
 
-#define MATRIXCELL_SIZE_X 15
+#define MATRIXCELL_SIZE_X 16
 #define MATRIXCELL_SIZE_Y 16
-
-void LCD_fill_mem(void);
 
 void draw_cross(int x, int y, uint16_t color)
 {
@@ -28,44 +23,60 @@ void draw_cross(int x, int y, uint16_t color)
 	}
 }
 
+extern int dev_mode;
+extern int boot_OK;
+
 void main_GUI(void)
 {
-	int xCenter = LCD_GET_XSIZE() / 2;
-  int y;
-		
-	GUI_SetBkColor(GUI_BLACK);
-	GUI_SetColor(GUI_WHITE);
-	GUI_Clear();
   osDelay(10);
 	char buf[256];
 	
-	GUI_SetFont(&GUI_Font16_ASCII);
-	GUI_ClearRect(16, 47, 16 + MATRIXCELL_SIZE_X * KBD_MATRIX_COL, 47 + MATRIXCELL_SIZE_Y * KBD_MATRIX_ROW);
+	GUI_Text(0, 0, "USB boot mode", White, Black);
+	while (dev_mode == 0)
+	{
+		if (boot_OK == 0)
+			GUI_Text(10, 20, "FW load state: 0", White, Black);
+		else
+			GUI_Text(10, 20, "USB boot mode", White, Black);
+	}
+	
+	LCD_clear();
+	
+	GUI_Text(18, 16, "0 1 2 3 4 5 6 7 8 9 A B", White, Black);
+	buf[1] = 0;
 	for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
-		for (int j=0 ; j<KBD_MATRIX_COL ; ++j)
-		{
-			int x = 16 + MATRIXCELL_SIZE_X * j;
-			int y = 47 + MATRIXCELL_SIZE_Y * i;
-			GUI_DrawRect(x, y, x + MATRIXCELL_SIZE_X, y + MATRIXCELL_SIZE_Y);
-		}
-	GUI_DispStringAt("Keyboard matrix: ", 0, 16);
-	GUI_DispStringAt("0  1  2  3  4  5  6  7  8  9  A  B", 18, 32);
-	GUI_DispStringAt("0\n1\n2\n3\n4\n5\n6\n7\n8\n9\nA\nB", 0, 48);
+	{
+		if (i < 10)
+			buf[0] = 48 + i;
+		else
+			buf[0] = 55 + i;
+		GUI_Text(0, 32 + i*16, buf, White, Black);
+	}
+	for (int i=0 ; i<=KBD_MATRIX_ROW ; ++i)
+	{
+		int y = 32 + MATRIXCELL_SIZE_Y * i;
+		LCD_DrawLine(16, y, 16 + MATRIXCELL_SIZE_X * KBD_MATRIX_COL, y, White);
+	}
+	for (int i=0 ; i<=KBD_MATRIX_COL ; ++i)
+	{
+		int x = 16 + MATRIXCELL_SIZE_X * i;
+		LCD_DrawLine(x, 32, x, 32 + MATRIXCELL_SIZE_Y * KBD_MATRIX_ROW, White);
+	}
 	
 	while (1)
 	{		
 		MX_BIT_1_ON();
 		
-		sprintf(buf, "HID scancodes: %04X %04X %04X %04X %04X %04X", keys_pressed[0], keys_pressed[1], 
+		sprintf(buf, "HID: %04X %04X %04X %04X %04X %04X", keys_pressed[0], keys_pressed[1], 
 				keys_pressed[2], keys_pressed[3], keys_pressed[4], keys_pressed[5]);
-		GUI_DispStringAt(buf, 0, 0);
+		GUI_Text(0, 0, buf, White, Black);
 		
 		for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
 		{
 			for (int j=0 ; j<KBD_MATRIX_COL ; ++j)
 			{
 				int x = 16 + MATRIXCELL_SIZE_X * j;
-				int y = 47 + MATRIXCELL_SIZE_Y * i;
+				int y = 32 + MATRIXCELL_SIZE_Y * i;
 				if (kbd_data[i] & (1 << j))
 				{
 					draw_cross(x, y, White);
@@ -80,10 +91,9 @@ void main_GUI(void)
 		for (int i=0 ; i<12 ; ++i)
 		{
 			sprintf(buf, "%i=%04X", i, kbd_data[i]);
-			GUI_DispStringAt(buf, 255, 20 + i * 18);
+			GUI_Text(250, 20 + i * 18, buf, White, Black);
 		}
 		
-		WM_Exec();
 		MX_BIT_1_OFF();
 		
     osDelay(100);
