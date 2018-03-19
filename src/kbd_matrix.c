@@ -50,9 +50,9 @@ void init_matrix(void)
 
 #define CHECK_MTX(scancode, matrix) \
 	{ \
-		if (matrix[scancode]->row != 0x0000) \
+		if (matrix[scancode].row != 0x0000) \
 		{ \
-			kbd_data[matrix[scancode]->row] |= matrix[scancode]->col; \
+			kbd_data[matrix[scancode].row - 1] |= matrix[scancode].col; \
 		} \
 	}
 
@@ -78,7 +78,7 @@ void fill_matrix(uint32_t mode)
 	
 	if (keys_pressed[0] != 0)
 	{
-		CHECK_MTX(((keys_pressed[0] & 0xff00) >> 8), (&kbd_matrix_f));
+		CHECK_MTX(((keys_pressed[0] & 0xff00) >> 8), kbd_matrix_f);
 	}
 	
 	for (int i=0 ; i<KBR_MAX_NBR_PRESSED ; ++i)
@@ -88,7 +88,7 @@ void fill_matrix(uint32_t mode)
 		if (key_sc == 0)
 			continue;
 		
-		CHECK_MTX(key_sc, (&kbd_matrix));
+		CHECK_MTX(key_sc, kbd_matrix);
 	}
 	
 	xSemaphoreGive(matrix_fill_sem);
@@ -97,6 +97,8 @@ void fill_matrix(uint32_t mode)
 void proc_matrix(void)
 {
 	xSemaphoreTake(matrix_fill_sem, 10);
-	PORT_OUT->ODR = ~kbd_data[~PORT_INP->IDR];
+	// TODO: encode ROW bits to number!
+	uint16_t row = ~PORT_INP->IDR;
+	PORT_OUT->ODR = ~kbd_data[row];
 	xSemaphoreGive(matrix_fill_sem);
 }
