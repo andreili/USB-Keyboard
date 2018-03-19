@@ -1,7 +1,6 @@
 #ifndef _HID_PROC_H_
 #define _HID_PROC_H_
 
-#include "usbh_usr.h"
 #include "usbh_hid_core.h"
 
 #define KBR_MAX_NBR_PRESSED 6
@@ -17,7 +16,7 @@ extern uint16_t keys_pressed[KBR_MAX_NBR_PRESSED];
 #define LED_6_ON()	GPIOD->BSRRL = GPIO_Pin_15
 #define LED_6_OFF()	GPIOD->BSRRH = GPIO_Pin_15*/
 
-extern USBH_Usr_cb_TypeDef USR_HID_Callbacks;
+extern const USBH_Usr_cb_TypeDef USR_HID_Callbacks;
 
 #define KEY_MOD_LCTRL  0x01
 #define KEY_MOD_LSHIFT 0x02

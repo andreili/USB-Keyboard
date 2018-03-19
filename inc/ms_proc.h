@@ -2,7 +2,6 @@
 #define _MS_PROC_H_
 
 #include <string.h>
-#include "usbh_usr.h"
 #include "ff.h"       /* FATFS */
 #include "usbh_msc_core.h"
 #include "usbh_msc_scsi.h"

@@ -101,14 +101,14 @@ __ALIGN_BEGIN HID_Machine_TypeDef        HID_Machine_mus __ALIGN_END ;
     #pragma data_alignment=4   
   #endif
 #endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
-__ALIGN_BEGIN HID_Report_TypeDef         HID_Report __ALIGN_END ;
+__ALIGN_BEGIN HID_Report_TypeDef        const HID_Report __ALIGN_END ;
 
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
     #pragma data_alignment=4   
   #endif
 #endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
-__ALIGN_BEGIN USB_Setup_TypeDef          HID_Setup __ALIGN_END ;
+__ALIGN_BEGIN USB_Setup_TypeDef          const HID_Setup __ALIGN_END ;
 
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
@@ -159,7 +159,7 @@ static USBH_Status USBH_Set_Protocol (USB_OTG_CORE_HANDLE *pdev,
                                       uint8_t protocol);
 
 
-USBH_Class_cb_TypeDef  HID_cb = 
+const USBH_Class_cb_TypeDef  HID_cb = 
 {
   USBH_HID_InterfaceInit,
   USBH_HID_InterfaceDeInit,

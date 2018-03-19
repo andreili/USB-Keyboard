@@ -69,7 +69,8 @@
 /**
   * @}
   */ 
-#define   MAX_DATA_LENGTH                        0x200
+#define   MAX_DATA_LENGTH                        0xf0
+#warning 0x200
 
 /** @defgroup USB_CORE_Exported_Types
   * @{

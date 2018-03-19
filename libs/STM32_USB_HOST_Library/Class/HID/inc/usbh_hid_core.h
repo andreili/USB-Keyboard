@@ -162,7 +162,7 @@ HID_Machine_TypeDef;
 /** @defgroup USBH_HID_CORE_Exported_Variables
   * @{
   */ 
-extern USBH_Class_cb_TypeDef  HID_cb;
+extern const USBH_Class_cb_TypeDef  HID_cb;
 /**
   * @}
   */ 

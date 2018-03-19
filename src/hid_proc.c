@@ -32,7 +32,7 @@ void KEYBRD_Decode(uint8_t *pbuf, uint16_t length)
 	xSemaphoreGive(usb_kbd_fill_sem);
 }
 
-HID_cb_TypeDef HID_KEYBRD_cb= 
+const HID_cb_TypeDef HID_KEYBRD_cb= 
 {
   KEYBRD_Init,
   KEYBRD_Decode
@@ -52,7 +52,7 @@ void  MOUSE_Decode(uint8_t *data, uint16_t length)
   USR_MOUSE_ProcessData(&HID_MOUSE_Data);*/
 }
 
-HID_cb_TypeDef HID_MOUSE_cb = 
+const HID_cb_TypeDef HID_MOUSE_cb = 
 {
   MOUSE_Init,
   MOUSE_Decode,
@@ -173,7 +173,7 @@ void  USR_KEYBRD_ProcessData (uint8_t data)
 {
 }*/
 
-USBH_Usr_cb_TypeDef USR_HID_Callbacks =
+const USBH_Usr_cb_TypeDef USR_HID_Callbacks =
 {
 	USBH_USR_HID_Init,
   USBH_USR_HID_DeInit,

@@ -63,7 +63,7 @@ typedef struct _USBH_HCD_INT
   
 }USBH_HCD_INT_cb_TypeDef;
 
-extern USBH_HCD_INT_cb_TypeDef *USBH_HCD_INT_fops;
+extern const USBH_HCD_INT_cb_TypeDef *USBH_HCD_INT_fops;
 /**
   * @}
   */ 

@@ -56,14 +56,14 @@ uint8_t USBH_Disconnected (USB_OTG_CORE_HANDLE *pdev);
 uint8_t USBH_Connected (USB_OTG_CORE_HANDLE *pdev); 
 uint8_t USBH_SOF (USB_OTG_CORE_HANDLE *pdev); 
 
-USBH_HCD_INT_cb_TypeDef USBH_HCD_INT_cb = 
+const USBH_HCD_INT_cb_TypeDef USBH_HCD_INT_cb = 
 {
   USBH_SOF,
   USBH_Connected, 
   USBH_Disconnected,    
 };
 
-USBH_HCD_INT_cb_TypeDef  *USBH_HCD_INT_fops = &USBH_HCD_INT_cb;
+const USBH_HCD_INT_cb_TypeDef  *USBH_HCD_INT_fops = &USBH_HCD_INT_cb;
 /**
   * @}
   */ 
