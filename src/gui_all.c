@@ -30,6 +30,8 @@ void main_GUI(void)
 	while (1)
 	{		
 		GUI_SetFont(&GUI_Font16_ASCII);
+		LED_3_ON();
+		
 		sprintf(buf, "HID scancodes: %04X %04X %04X %04X %04X %04X", keys_pressed[0], keys_pressed[1], 
 				keys_pressed[2], keys_pressed[3], keys_pressed[4], keys_pressed[5]);
 		GUI_DispStringAt(buf, 0, 0);
@@ -62,6 +64,7 @@ void main_GUI(void)
 		}
 		
 		WM_ExecIdle();
+		LED_3_OFF();
 		
     osDelay(100);
 	}
