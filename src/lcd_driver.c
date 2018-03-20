@@ -503,7 +503,6 @@ __inline void LCD_WriteData(uint16_t data)
 	//GPIO_SetBits(GPIOD , GPIO_Pin_7);		 //CS=1;
 }
 
-
 void LCD_fill_mem(void)
 {
 	int32_t x, y;
