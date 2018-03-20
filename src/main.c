@@ -7,7 +7,7 @@
 #include "cmsis_os.h"
 #include "gui_all.h"
 
-//#define ENABLE_USB_BOOT
+#define ENABLE_USB_BOOT
 //#define ENABLE_PS2
 
 #define USE_GUI
@@ -70,7 +70,7 @@ void sw_init(void)
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
@@ -113,8 +113,6 @@ void task_GUI(void const * argument);
 void task_matrix(void const * argument);
 void task_ps2(void const * argument);
 
-int dev_mode = 0;
-
 int main(void)
 {
 	led_init();
@@ -123,7 +121,7 @@ int main(void)
 	
 	// get configuration
 	sw_cfg = (GPIOC->IDR & 0x0f);
-	sw_mode = ((GPIOA->IDR & 0xff) < 4);
+	sw_mode = (GPIOA->IDR & 0xff);
 	
   osThreadDef(USBTask, task_USB, osPriorityNormal, 0, 128);
   USBTaskHandle = osThreadCreate(osThread(USBTask), NULL);
@@ -150,8 +148,13 @@ int main(void)
 	while (1);
 }
 
+int dev_mode = 0;
+extern int boot_mounted;
+
 void task_USB(void const * argument)
 {
+	int mount_counter = 0;
+	
 	dev_mode = 0;
 	
 #ifdef ENABLE_USB_BOOT
@@ -166,6 +169,8 @@ void task_USB(void const * argument)
             &USR_MS_cb);
   while (1)
   {
+		if ((!boot_mounted) && (++mount_counter > 3000))
+			break;
     USBH_Process(&USB_OTG_Core , &USB_Host);
     osDelay(1);
 	}
@@ -188,8 +193,8 @@ void task_USB(void const * argument)
   {
     USBH_Process(&USB_OTG_Core , &USB_Host);
 		// fill keyboard matrix
-		fill_matrix(sw_mode);		
-    osDelay(5);     
+		fill_matrix(sw_mode);
+    osDelay(5);
   }
 }
 

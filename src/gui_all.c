@@ -26,6 +26,10 @@ void draw_cross(int x, int y, uint16_t color)
 
 extern int dev_mode;
 extern int boot_OK;
+extern int boot_mounted;
+extern int fw_size;
+extern uint32_t fw_crc;
+extern uint32_t fw_crc_base;
 
 void main_GUI(void)
 {
@@ -36,9 +40,11 @@ void main_GUI(void)
 	while (dev_mode == 0)
 	{
 		if (boot_OK == 0)
-			GUI_Text(10, 20, "FW load state: 0", White, Black);
+			GUI_Text(10, 20, "Waiting firmware", White, Black);
 		else
-			GUI_Text(10, 20, "USB boot mode", White, Black);
+			GUI_Text(10, 20, "USB boot mode   ", White, Black);
+		sprintf(buf, "Drive: %i %i %X %X", boot_mounted, fw_size, fw_crc, fw_crc_base);
+		GUI_Text(10, 40, buf, White, Black);
 	}
 	
 	LCD_clear();
