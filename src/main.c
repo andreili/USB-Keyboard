@@ -8,7 +8,6 @@
 #include "gui_all.h"
 
 #define ENABLE_USB_BOOT
-//#define ENABLE_PS2
 
 #define USE_GUI
 
@@ -211,21 +210,20 @@ void task_matrix(void const * argument)
   for(;;)
   {
 		LED_4_ON();
-		//proc_matrix();
+		proc_matrix();
 		LED_4_OFF();
 		osDelay(0);
   }
 }
 
-#ifdef ENABLE_PS2
 void task_ps2(void const * argument)
 {
   for(;;)
   {
-		proc_ps2();
+		//proc_ps2();
+		osDelay(0);
   }
 }
-#endif 
 
 
 #ifdef USE_FULL_ASSERT

@@ -2,19 +2,16 @@
 #include "cmsis_os.h"
 
 uint16_t keys_pressed[KBR_MAX_NBR_PRESSED];
-SemaphoreHandle_t usb_kbd_fill_sem = NULL;
 
 void  KEYBRD_Init(void)
 {
 	for (int i=0 ; i<KBR_MAX_NBR_PRESSED ; ++i)
 		keys_pressed[i] = 0;
-	
-	usb_kbd_fill_sem = xSemaphoreCreateMutex();
 }
 
 void KEYBRD_Decode(uint8_t *pbuf, uint16_t length)
 {
-	xSemaphoreTake(usb_kbd_fill_sem, 10);
+	__disable_irq();
 	uint16_t i;
 	uint16_t pressed_count = 0;
 	
@@ -29,7 +26,7 @@ void KEYBRD_Decode(uint8_t *pbuf, uint16_t length)
 		if (pbuf[i] >= KEY_A)
 			keys_pressed[pressed_count++] = ctrl_keys | pbuf[i];
 	}
-	xSemaphoreGive(usb_kbd_fill_sem);
+	__enable_irq();
 }
 
 const HID_cb_TypeDef HID_KEYBRD_cb= 

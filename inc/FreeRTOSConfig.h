@@ -102,7 +102,7 @@ extern uint32_t SystemCoreClock;
 #define configTOTAL_HEAP_SIZE                    ((size_t)10000)
 #define configMAX_TASK_NAME_LEN                  ( 16 )
 #define configUSE_16_BIT_TICKS                   0
-#define configUSE_MUTEXES                        1
+#define configUSE_MUTEXES                        0
 #define configQUEUE_REGISTRY_SIZE                8
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  1
 

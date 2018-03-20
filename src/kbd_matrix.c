@@ -13,8 +13,6 @@
 */
 
 uint16_t kbd_data[KBD_MATRIX_ROW];
-SemaphoreHandle_t matrix_fill_sem = NULL;
-extern SemaphoreHandle_t usb_kbd_fill_sem;
 
 uint16_t proc_row(uint16_t col_data)
 {
@@ -44,8 +42,6 @@ void init_matrix(void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
   GPIO_Init(PORT_INP, &GPIO_InitStructure);
-	
-	matrix_fill_sem = xSemaphoreCreateMutex();
 }
 
 #define CHECK_MTX(scancode, matrix) \
@@ -59,7 +55,7 @@ void init_matrix(void)
 
 void fill_matrix(uint32_t mode)
 {
-	xSemaphoreTake(matrix_fill_sem, 10);
+	__disable_irq();
 	
 	const uint8_t* kbd_matrix = kbd_mc7007_lat;
 	const uint8_t* kbd_matrix_f = kbd_mc7007_f;
@@ -90,12 +86,12 @@ void fill_matrix(uint32_t mode)
 		CHECK_MTX(key_sc, kbd_matrix);
 	}
 	
-	xSemaphoreGive(matrix_fill_sem);
+	__enable_irq();
 }
 
 void proc_matrix(void)
 {
-	xSemaphoreTake(matrix_fill_sem, 10);
+	__disable_irq();
 	uint16_t row = ~PORT_INP->IDR;
 	uint16_t i, idx;
 	// encode a bit index to row number
@@ -106,5 +102,5 @@ void proc_matrix(void)
 			break;
 		}
 	PORT_OUT->ODR = (PORT_OUT->ODR & 0x000f) | (~kbd_data[row]);
-	xSemaphoreGive(matrix_fill_sem);
+	__enable_irq();
 }
