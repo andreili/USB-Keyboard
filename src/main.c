@@ -56,10 +56,11 @@ void led_init(void)
   GPIO_Init(GPIOD, &GPIO_InitStructure);
 }
 
-#define SW_CFG_MATRIX	0x01
-#define SW_CFG_PS2		0x02
-#define SW_CFG_VV55		0x04
-#define SW_CFG_UNUSED	0x08
+#define SW_CFG_MATRIX	0x00
+#define SW_CFG_PS2		0x01
+#define SW_CFG_VV55		0x02
+#define SW_CFG_ZXBUS	0x03
+#define SW_CFG_UNUSED	0x0f
 
 uint32_t sw_cfg, sw_mode;
 
@@ -126,7 +127,7 @@ int main(void)
   osThreadDef(USBTask, task_USB, osPriorityNormal, 0, 128);
   USBTaskHandle = osThreadCreate(osThread(USBTask), NULL);
 
-	if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_MATRIX)
+	if (sw_cfg == SW_CFG_MATRIX)
 	{
 		osThreadDef(MatrixTask, task_matrix, osPriorityNormal, 0, 128);
 		MatrixTaskHandle = osThreadCreate(osThread(MatrixTask), NULL);
@@ -137,7 +138,7 @@ int main(void)
   GUITaskHandle = osThreadCreate(osThread(GUITask), NULL);
 	#endif
 
-	if ((sw_cfg & SW_CFG_MATRIX) == SW_CFG_PS2)
+	if (sw_cfg == SW_CFG_PS2)
 	{
 		osThreadDef(PS2Task, task_ps2, osPriorityBelowNormal, 0, 128);
 		PS2TaskHandle = osThreadCreate(osThread(PS2Task), NULL);
@@ -210,7 +211,7 @@ void task_matrix(void const * argument)
   for(;;)
   {
 		LED_4_ON();
-		proc_matrix();
+		//proc_matrix();
 		LED_4_OFF();
 		osDelay(0);
   }
