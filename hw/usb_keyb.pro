@@ -1,4 +1,4 @@
-update=19.03.2018 19:33:10
+update=Вт 20 мар 2018 15:11:25
 version=1
 last_client=kicad
 [pcbnew]
@@ -63,3 +63,4 @@ LibName31=contrib
 LibName32=valves
 LibName33=C:/Program Files/KiCad/share/kicad/library/stm32
 LibName34=D:/Projects/Kicad/stm_var
+LibName35=/media/Dev/mem
