@@ -220,7 +220,7 @@ F 3 "" H 1750 775 50  0001 C CNN
 	1    1750 775 
 	1    0    0    -1  
 $EndComp
-Text GLabel 10750 7050 2    60   Input ~ 0
+Text GLabel 10750 8450 2    60   Input ~ 0
 FS_PWR
 Text GLabel 10750 4550 2    60   Input ~ 0
 FS_VBUS
@@ -366,29 +366,29 @@ Text GLabel 10750 8250 2    60   Input ~ 0
 CK
 Text GLabel 1750 7250 0    60   Input ~ 0
 CMD
-Text GLabel 1750 7450 0    60   Input ~ 0
+Text GLabel 10750 7050 2    60   Input ~ 0
 I0
-Text GLabel 1750 7550 0    60   Input ~ 0
+Text GLabel 10750 7150 2    60   Input ~ 0
 I1
-Text GLabel 1750 7650 0    60   Input ~ 0
+Text GLabel 10750 7250 2    60   Input ~ 0
 I2
-Text GLabel 1750 7750 0    60   Input ~ 0
+Text GLabel 10750 7350 2    60   Input ~ 0
 I3
-Text GLabel 1750 7850 0    60   Input ~ 0
+Text GLabel 10750 7450 2    60   Input ~ 0
 I4
-Text GLabel 1750 7950 0    60   Input ~ 0
+Text GLabel 10750 7550 2    60   Input ~ 0
 I5
-Text GLabel 1750 8050 0    60   Input ~ 0
+Text GLabel 10750 7650 2    60   Input ~ 0
 I6
-Text GLabel 1750 8150 0    60   Input ~ 0
+Text GLabel 10750 7750 2    60   Input ~ 0
 I7
-Text GLabel 1750 8250 0    60   Input ~ 0
+Text GLabel 1750 7050 0    60   Input ~ 0
 I8
-Text GLabel 1750 8350 0    60   Input ~ 0
+Text GLabel 1750 7150 0    60   Input ~ 0
 I9
-Text GLabel 1750 8450 0    60   Input ~ 0
+Text GLabel 1750 8350 0    60   Input ~ 0
 I10
-Text GLabel 1750 8550 0    60   Input ~ 0
+Text GLabel 1750 8450 0    60   Input ~ 0
 I11
 Text GLabel 1750 5350 0    60   Input ~ 0
 O0
@@ -1724,21 +1724,21 @@ Text GLabel 11850 6600 0    60   Input ~ 0
 DR2
 Text GLabel 11850 7900 0    60   Input ~ 0
 DR3
-Text GLabel 10750 7150 2    60   Input ~ 0
+Text GLabel 10750 5350 2    60   Input ~ 0
 DR0
-Text GLabel 10750 7250 2    60   Input ~ 0
+Text GLabel 10750 5450 2    60   Input ~ 0
 DR1
-Text GLabel 10750 7350 2    60   Input ~ 0
+Text GLabel 10750 5550 2    60   Input ~ 0
 DR2
-Text GLabel 10750 7450 2    60   Input ~ 0
+Text GLabel 10750 5650 2    60   Input ~ 0
 DR3
-Text GLabel 10750 7550 2    60   Input ~ 0
+Text GLabel 10750 5750 2    60   Input ~ 0
 DR4
-Text GLabel 10750 7650 2    60   Input ~ 0
+Text GLabel 10750 5850 2    60   Input ~ 0
 DR5
-Text GLabel 10750 7750 2    60   Input ~ 0
+Text GLabel 10750 6150 2    60   Input ~ 0
 DR6
-Text GLabel 10750 8450 2    60   Input ~ 0
+Text GLabel 10750 6250 2    60   Input ~ 0
 DR7
 Text GLabel 10750 5950 2    60   Input ~ 0
 SCL
@@ -2453,17 +2453,6 @@ F 3 "" H 7700 10200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Conn_01x04 J?
-U 1 1 5AB61FE4
-P 8850 10000
-F 0 "J?" H 8850 10200 50  0000 C CNN
-F 1 "UART" H 8850 9700 50  0000 C CNN
-F 2 "" H 8850 10000 50  0001 C CNN
-F 3 "" H 8850 10000 50  0001 C CNN
-	1    8850 10000
-	1    0    0    -1  
-$EndComp
-$Comp
 L +3.3V #PWR?
 U 1 1 5AB62226
 P 8650 10100
@@ -2611,20 +2600,39 @@ Text GLabel 15400 3800 2    60   Input ~ 0
 ZA7
 Text GLabel 13250 5100 2    60   Input ~ 0
 ZMREQn
-Text GLabel 10750 5350 2    60   Input ~ 0
+Text GLabel 1750 7350 0    60   Input ~ 0
 A0
-Text GLabel 10750 5450 2    60   Input ~ 0
+Text GLabel 1750 7450 0    60   Input ~ 0
 A1
-Text GLabel 10750 5550 2    60   Input ~ 0
+Text GLabel 1750 7550 0    60   Input ~ 0
 A2
-Text GLabel 10750 5650 2    60   Input ~ 0
+Text GLabel 1750 7650 0    60   Input ~ 0
 A3
-Text GLabel 10750 5750 2    60   Input ~ 0
+Text GLabel 1750 7750 0    60   Input ~ 0
 A4
-Text GLabel 10750 5850 2    60   Input ~ 0
+Text GLabel 1750 7850 0    60   Input ~ 0
 A5
-Text GLabel 10750 6150 2    60   Input ~ 0
+Text GLabel 1750 7950 0    60   Input ~ 0
 A6
-Text GLabel 10750 6250 2    60   Input ~ 0
+Text GLabel 1750 8050 0    60   Input ~ 0
 A7
+Text GLabel 1750 8250 0    60   Input ~ 0
+UART3_RTS
+Text GLabel 1750 8150 0    60   Input ~ 0
+UART3_CTS
+Text GLabel 8650 9800 0    60   Input ~ 0
+UART3_RTS
+Text GLabel 8650 9700 0    60   Input ~ 0
+UART3_CTS
+$Comp
+L Conn_01x06 J?
+U 1 1 5AB754D7
+P 8850 9900
+F 0 "J?" H 8850 10200 50  0000 C CNN
+F 1 "UART" H 8850 9500 50  0000 C CNN
+F 2 "" H 8850 9900 50  0001 C CNN
+F 3 "" H 8850 9900 50  0001 C CNN
+	1    8850 9900
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
