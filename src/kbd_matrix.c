@@ -46,7 +46,7 @@ void init_matrix(void)
 
 #define CHECK_MTX(scancode, matrix) \
 	{ \
-		uint8_t row = matrix[scancode] & 0xf0; \
+		uint8_t row = (matrix[scancode] & 0xf0) >> 4; \
 		if (row != 15) \
 		{ \
 			kbd_data[row] |= (1 << (matrix[scancode] & 0x0f)); \
