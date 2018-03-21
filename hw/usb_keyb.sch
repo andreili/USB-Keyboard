@@ -1598,101 +1598,90 @@ F 3 "" H 12600 1050 50  0001 C CNN
 $EndComp
 Text GLabel 10750 6550 2    60   Input ~ 0
 HS_ID
-Text GLabel 14450 5150 0    60   Input ~ 0
+Text GLabel 14500 4600 0    60   Input ~ 0
 ZA15
-Text GLabel 14950 5150 2    60   Input ~ 0
+Text GLabel 15000 4600 2    60   Input ~ 0
 ZA14
-Text GLabel 14450 5250 0    60   Input ~ 0
+Text GLabel 14500 4700 0    60   Input ~ 0
 ZA13
-Text GLabel 14950 5250 2    60   Input ~ 0
+Text GLabel 15000 4700 2    60   Input ~ 0
 ZA12
-Text GLabel 14450 5350 0    60   Input ~ 0
+Text GLabel 14500 4800 0    60   Input ~ 0
 ZD7
-Text GLabel 14950 5350 2    60   Input ~ 0
+Text GLabel 15000 4800 2    60   Input ~ 0
 +5
-Text GLabel 14450 5650 0    60   Input ~ 0
+Text GLabel 14500 5100 0    60   Input ~ 0
 ZD0
-Text GLabel 14450 5750 0    60   Input ~ 0
+Text GLabel 14500 5200 0    60   Input ~ 0
 ZD1
-Text GLabel 14450 5850 0    60   Input ~ 0
+Text GLabel 14500 5300 0    60   Input ~ 0
 ZD2
-Text GLabel 14450 5950 0    60   Input ~ 0
+Text GLabel 14500 5400 0    60   Input ~ 0
 ZD6
-Text GLabel 14450 6050 0    60   Input ~ 0
+Text GLabel 14500 5500 0    60   Input ~ 0
 ZD5
-Text GLabel 14450 6150 0    60   Input ~ 0
+Text GLabel 14500 5600 0    60   Input ~ 0
 ZD3
-Text GLabel 14450 6250 0    60   Input ~ 0
+Text GLabel 14500 5700 0    60   Input ~ 0
 ZD4
-Text GLabel 14450 6350 0    60   Input ~ 0
+Text GLabel 14500 5800 0    60   Input ~ 0
 ZINTn
-Text GLabel 14450 6450 0    60   Input ~ 0
+Text GLabel 14500 5900 0    60   Input ~ 0
 ZNMIn
-Text GLabel 14450 6550 0    60   Input ~ 0
+Text GLabel 14500 6000 0    60   Input ~ 0
 ZHALTn
-Text GLabel 14450 6650 0    60   Input ~ 0
+Text GLabel 14500 6100 0    60   Input ~ 0
 ZMREQn
-Text GLabel 14450 6750 0    60   Input ~ 0
+Text GLabel 14500 6200 0    60   Input ~ 0
 ZIORQn
-Text GLabel 14450 6850 0    60   Input ~ 0
+Text GLabel 14500 6300 0    60   Input ~ 0
 ZRDn
-Text GLabel 14450 6950 0    60   Input ~ 0
+Text GLabel 14500 6400 0    60   Input ~ 0
 ZWRn
-Text GLabel 14450 7150 0    60   Input ~ 0
+Text GLabel 14500 6600 0    60   Input ~ 0
 ZWAITn
-Text GLabel 14450 7450 0    60   Input ~ 0
+Text GLabel 14500 6900 0    60   Input ~ 0
 ZM1n
-Text GLabel 14450 7550 0    60   Input ~ 0
+Text GLabel 14500 7000 0    60   Input ~ 0
 ZRFSHn
-Text GLabel 14450 7650 0    60   Input ~ 0
+Text GLabel 14500 7100 0    60   Input ~ 0
 ZA8
-Text GLabel 14450 7750 0    60   Input ~ 0
+Text GLabel 14500 7200 0    60   Input ~ 0
 ZA10
-Text GLabel 14950 5650 2    60   Input ~ 0
+Text GLabel 15000 5100 2    60   Input ~ 0
 GND
-Text GLabel 14950 5750 2    60   Input ~ 0
+Text GLabel 15000 5200 2    60   Input ~ 0
 GND
-Text GLabel 14950 5850 2    60   Input ~ 0
+Text GLabel 15000 5300 2    60   Input ~ 0
 CLK
-Text GLabel 14950 5950 2    60   Input ~ 0
+Text GLabel 15000 5400 2    60   Input ~ 0
 ZA0
-Text GLabel 14950 6050 2    60   Input ~ 0
+Text GLabel 15000 5500 2    60   Input ~ 0
 ZA1
-Text GLabel 14950 6150 2    60   Input ~ 0
+Text GLabel 15000 5600 2    60   Input ~ 0
 ZA2
-Text GLabel 14950 6250 2    60   Input ~ 0
+Text GLabel 15000 5700 2    60   Input ~ 0
 ZA3
-Text GLabel 14950 6450 2    60   Input ~ 0
+Text GLabel 15000 5900 2    60   Input ~ 0
 GND
-Text GLabel 14950 6950 2    60   Input ~ 0
+Text GLabel 15000 6400 2    60   Input ~ 0
 ZBUSRQn
-Text GLabel 14950 7050 2    60   Input ~ 0
+Text GLabel 15000 6500 2    60   Input ~ 0
 ZRESn
-Text GLabel 14950 7150 2    60   Input ~ 0
+Text GLabel 15000 6600 2    60   Input ~ 0
 ZA7
-Text GLabel 14950 7250 2    60   Input ~ 0
+Text GLabel 15000 6700 2    60   Input ~ 0
 ZA6
-Text GLabel 14950 7350 2    60   Input ~ 0
+Text GLabel 15000 6800 2    60   Input ~ 0
 ZA5
-Text GLabel 14950 7450 2    60   Input ~ 0
+Text GLabel 15000 6900 2    60   Input ~ 0
 ZA4
-Text GLabel 14950 7650 2    60   Input ~ 0
+Text GLabel 15000 7100 2    60   Input ~ 0
 ZBUSACKn
-Text GLabel 14950 7750 2    60   Input ~ 0
+Text GLabel 15000 7200 2    60   Input ~ 0
 ZA9
-Text GLabel 14950 7850 2    60   Input ~ 0
+Text GLabel 15000 7300 2    60   Input ~ 0
 ZA11
-$Comp
-L Conn_02x28_Odd_Even J11
-U 1 1 5AB3CEB4
-P 14650 6450
-F 0 "J11" H 14700 7850 50  0000 C CNN
-F 1 "ZX BUS" H 14700 4950 50  0000 C CNN
-F 2 "" H 14650 6450 50  0001 C CNN
-F 3 "" H 14650 6450 50  0001 C CNN
-	1    14650 6450
-	1    0    0    -1  
-$EndComp
 Text GLabel 13250 5700 2    60   Input ~ 0
 ZD0
 Text GLabel 13250 5800 2    60   Input ~ 0
@@ -2893,4 +2882,15 @@ F 3 "" H 9300 2000 50  0000 C CNN
 $EndComp
 Wire Wire Line
 	7650 2400 7650 2150
+$Comp
+L Conn_02x32_Row_Letter_Last J11
+U 1 1 5ABDA855
+P 14700 6100
+F 0 "J11" H 14750 7700 50  0000 C CNN
+F 1 "ZX-BUS" H 14750 4400 50  0000 C CNN
+F 2 "Connectors_IEC_DIN:Socket_DIN41612-CaseC1-AC-Female-64Pin-2rows" H 14700 6100 50  0001 C CNN
+F 3 "" H 14700 6100 50  0001 C CNN
+	1    14700 6100
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
