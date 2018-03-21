@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:mem
 LIBS:power
 LIBS:device
 LIBS:switches
@@ -31,7 +32,6 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:mem
 LIBS:usb_keyb-cache
 EELAYER 25 0
 EELAYER END
@@ -513,17 +513,6 @@ F 3 "" H 11325 2325 50  0001 C CNN
 	1    11325 2325
 	1    0    0    -1  
 $EndComp
-$Comp
-L Micro_SD_Card_Det J2
-U 1 1 5AB15F8B
-P 9300 2000
-F 0 "J2" H 8650 2700 50  0000 C CNN
-F 1 "MicroSD" H 9950 2700 50  0000 R CNN
-F 2 "" H 11350 2700 50  0001 C CNN
-F 3 "" H 9300 2100 50  0001 C CNN
-	1    9300 2000
-	1    0    0    -1  
-$EndComp
 Text GLabel 8400 1600 0    60   Input ~ 0
 D2
 Text GLabel 8400 1700 0    60   Input ~ 0
@@ -561,12 +550,12 @@ $EndComp
 $Comp
 L GND #PWR013
 U 1 1 5AB17E87
-P 7900 2600
-F 0 "#PWR013" H 7900 2350 50  0001 C CNN
-F 1 "GND" H 7900 2450 50  0000 C CNN
-F 2 "" H 7900 2600 50  0001 C CNN
-F 3 "" H 7900 2600 50  0001 C CNN
-	1    7900 2600
+P 7900 2250
+F 0 "#PWR013" H 7900 2000 50  0001 C CNN
+F 1 "GND" H 8025 2200 50  0000 C CNN
+F 2 "" H 7900 2250 50  0001 C CNN
+F 3 "" H 7900 2250 50  0001 C CNN
+	1    7900 2250
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -796,7 +785,7 @@ U 1 1 5AB233F5
 P 12250 9050
 F 0 "J5" H 12250 9650 50  0000 C CNN
 F 1 "MX_ROW" H 12250 8350 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x11_Pitch2.54mm" H 12250 9050 50  0001 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x12_Pitch2.54mm" H 12250 9050 50  0001 C CNN
 F 3 "" H 12250 9050 50  0001 C CNN
 	1    12250 9050
 	1    0    0    -1  
@@ -807,7 +796,7 @@ U 1 1 5AB2358C
 P 13250 9050
 F 0 "J6" H 13250 9650 50  0000 C CNN
 F 1 "MX_COL" H 13250 8350 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_1x11_Pitch2.54mm" H 13250 9050 50  0001 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x12_Pitch2.54mm" H 13250 9050 50  0001 C CNN
 F 3 "" H 13250 9050 50  0001 C CNN
 	1    13250 9050
 	1    0    0    -1  
@@ -1338,7 +1327,7 @@ U 1 1 5AB374E2
 P 1450 9950
 F 0 "J1" H 1450 10150 50  0000 C CNN
 F 1 "POWER" H 1450 9650 50  0000 C CNN
-F 2 "" H 1450 9950 50  0001 C CNN
+F 2 "Connectors_Phoenix:PhoenixContact_GMSTBA-G_04x7.50mm_Angled" H 1450 9950 50  0001 C CNN
 F 3 "" H 1450 9950 50  0001 C CNN
 	1    1450 9950
 	-1   0    0    -1  
@@ -2353,14 +2342,7 @@ Wire Wire Line
 	8100 1900 8400 1900
 Connection ~ 7900 1800
 Wire Wire Line
-	7900 2150 7900 2600
-Wire Wire Line
-	7650 2150 7650 2400
-Wire Wire Line
-	7650 2400 8400 2400
-Wire Wire Line
-	8400 2500 7900 2500
-Connection ~ 7900 2500
+	7900 2150 7900 2250
 Wire Wire Line
 	8400 2100 8150 2100
 Wire Wire Line
@@ -2893,4 +2875,22 @@ F 3 "" H 14400 800 50  0001 C CNN
 	1    14400 800 
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	7600 2400 8400 2400
+Text GLabel 7600 2400 0    60   Input ~ 0
+CD
+Connection ~ 7650 2400
+$Comp
+L Micro_SD_Card J2
+U 1 1 5ABCF5FB
+P 9300 2000
+F 0 "J2" H 8650 2550 50  0000 C CNN
+F 1 "Micro_SD_Card" H 9900 1450 50  0000 C CNN
+F 2 "Projects:Conn_uSDcard" H 9500 2350 50  0000 C CNN
+F 3 "" H 9300 2000 50  0000 C CNN
+	1    9300 2000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7650 2400 7650 2150
 $EndSCHEMATC
