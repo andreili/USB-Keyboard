@@ -172,24 +172,24 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of USB */
-  osThreadDef(USB, task_USB, osPriorityNormal, 0, 128);
+  osThreadDef(USB, task_USB, osPriorityNormal, 0, 1024);
   USBHandle = osThreadCreate(osThread(USB), NULL);
 
   /* definition and creation of GUI */
-  osThreadDef(GUI, task_GUI, osPriorityIdle, 0, 128);
+  osThreadDef(GUI, task_GUI, osPriorityIdle, 0, 512);
   GUIHandle = osThreadCreate(osThread(GUI), NULL);
 
   /* definition and creation of Matrix */
-  //osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 128);
-  //MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
+  osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 256);
+  MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
 
   /* definition and creation of PS2 */
-  //osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
-  //PS2Handle = osThreadCreate(osThread(PS2), NULL);
+//  osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
+//  PS2Handle = osThreadCreate(osThread(PS2), NULL);
 
   /* definition and creation of zxbus */
-  //osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
-  //zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
+ // osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
+ // zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -384,6 +384,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, FS_PWR_DS_Pin|HS_PWR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, LED4_Pin|LED3_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(FS_PWR_GPIO_Port, FS_PWR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PE2 PE3 PE4 PE5 
@@ -427,10 +430,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD12 PD13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  /*Configure GPIO pins : LED4_Pin LED3_Pin */
+  GPIO_InitStruct.Pin = LED4_Pin|LED3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SDIO_CD_Pin */
@@ -505,7 +509,7 @@ static void MX_FSMC_Init(void)
 void task_USB(void const * argument)
 {
   /* init code for FATFS */
-  MX_FATFS_Init();
+  //MX_FATFS_Init();
 
   /* init code for LWIP */
   //MX_LWIP_Init();
@@ -518,6 +522,7 @@ void task_USB(void const * argument)
   for(;;)
   {
 		//fill_matrix(0);
+		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
     osDelay(1);
   }
   /* USER CODE END 5 */ 
@@ -528,7 +533,8 @@ void task_GUI(void const * argument)
 {
   /* USER CODE BEGIN task_GUI */
 	init_GUI();
-	//main_GUI();
+	main_GUI();
+	while (1);
   /* USER CODE END task_GUI */
 }
 
@@ -540,6 +546,7 @@ void task_matrix(void const * argument)
   for(;;)
   {
 		//proc_matrix();
+		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
     osDelay(1);
   }
   /* USER CODE END task_matrix */

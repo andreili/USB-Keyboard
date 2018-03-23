@@ -58,7 +58,7 @@
 #include "usbh_mtp.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "main.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
@@ -145,6 +145,7 @@ static void USBH_UserProcess1  (USBH_HandleTypeDef *phost, uint8_t id)
   break;
 
   case HOST_USER_DISCONNECTION:
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
   Appli_state = APPLICATION_DISCONNECT;
   break;
 
@@ -153,6 +154,7 @@ static void USBH_UserProcess1  (USBH_HandleTypeDef *phost, uint8_t id)
   break;
 
   case HOST_USER_CONNECTION:
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
   Appli_state = APPLICATION_START;
   break;
 
@@ -171,6 +173,7 @@ static void USBH_UserProcess2  (USBH_HandleTypeDef *phost, uint8_t id)
   break;
 
   case HOST_USER_DISCONNECTION:
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED4_Pin, GPIO_PIN_RESET);
   Appli_state = APPLICATION_DISCONNECT;
   break;
 
@@ -179,6 +182,7 @@ static void USBH_UserProcess2  (USBH_HandleTypeDef *phost, uint8_t id)
   break;
 
   case HOST_USER_CONNECTION:
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED4_Pin, GPIO_PIN_SET);
   Appli_state = APPLICATION_START;
   break;
 
