@@ -4,3 +4,15 @@ Listings
 *Makise*
 *.uvgui*
 *.uvoptx
+*.o
+*.d
+*.htm
+*.lnp
+*.sct
+*.dep
+*.lst
+*.map
+*.axf
+*.iex
+*.hex
+*bak
