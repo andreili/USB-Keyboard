@@ -5,6 +5,7 @@
 #include "lcd_driver.h"
 #include "usbh_hid_keybd.h"
 #include <stdio.h>
+#include <string.h>
 
 void init_GUI(void)
 {
@@ -25,6 +26,25 @@ void draw_cross(int x, int y, uint16_t color)
 	}
 }
 
+#define PR_BUF_LINES (15)
+volatile int pbuf_start = 0;
+volatile int pbuf_line_pos = 0;
+char print_buf[PR_BUF_LINES][200];
+
+int fputc(int ch, FILE *f)
+{
+	if (ch == '\n')
+	{
+		print_buf[pbuf_start][pbuf_line_pos] = '\0';
+		pbuf_line_pos = 0;
+		if (++pbuf_start >= PR_BUF_LINES)
+			pbuf_start = 0;
+	}
+	else
+		print_buf[pbuf_start][pbuf_line_pos++] = ch;
+  return ch;
+}
+
 extern int dev_mode;
 extern int boot_OK;
 extern int boot_mounted;
@@ -36,7 +56,7 @@ extern HID_KEYBD_Info_TypeDef     keybd_info;
 void main_GUI(void)
 {
   osDelay(10);
-	char buf[256];
+	//char buf[256];
 	
 	/*GUI_Text(0, 0, "USB boot mode", White, Black);
 	while (dev_mode == 0)
@@ -51,7 +71,7 @@ void main_GUI(void)
 	
 	LCD_clear();
 	
-	GUI_Text(18, 16, "0 1 2 3 4 5 6 7 8 9 A B", White, Black);
+	/*GUI_Text(18, 16, "0 1 2 3 4 5 6 7 8 9 A B", White, Black);
 	buf[1] = 0;
 	for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
 	{
@@ -70,13 +90,21 @@ void main_GUI(void)
 	{
 		int x = 16 + MATRIXCELL_SIZE_X * i;
 		LCD_DrawLine(x, 32, x, 32 + MATRIXCELL_SIZE_Y * KBD_MATRIX_ROW, White);
-	}
+	}*/
 	
 	while (1)
-	{		
+	{
+		LCD_clear();
+		int idx = 0;
+		for (int i=pbuf_start ; i<PR_BUF_LINES ; ++i)
+			GUI_Text(0, idx++ * 16, print_buf[i], White, Black);
+		if (pbuf_start > 0)
+		for (int i=0 ; i<pbuf_start ; ++i)
+			GUI_Text(0, idx++ * 16, print_buf[i], White, Black);
+		
 		//LED_3_ON();
 		
-		sprintf(buf, "HID: %04X %04X %04X %04X %04X %04X", keybd_info.keys[0], keybd_info.keys[1], 
+		/*sprintf(buf, "HID: %04X %04X %04X %04X %04X %04X", keybd_info.keys[0], keybd_info.keys[1], 
 				keybd_info.keys[2], keybd_info.keys[3], keybd_info.keys[4], keybd_info.keys[5]);
 		GUI_Text(0, 0, buf, White, Black);
 		
@@ -101,7 +129,7 @@ void main_GUI(void)
 		{
 			sprintf(buf, "%02i=%04X", i, kbd_data[i]);
 			GUI_Text(250, 20 + i * 18, buf, White, Black);
-		}
+		}*/
 		
 		//LED_3_OFF();
 		

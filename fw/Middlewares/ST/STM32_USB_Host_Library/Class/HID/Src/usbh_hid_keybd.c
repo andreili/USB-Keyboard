@@ -315,7 +315,7 @@ static  const  uint8_t  HID_KEYBRD_Codes[] = {
 USBH_StatusTypeDef USBH_HID_KeybdInit(USBH_HandleTypeDef *phost)
 {
   uint32_t x;
-  HID_HandleTypeDef *HID_Handle =  (HID_HandleTypeDef *) phost->pActiveClass->pData;  
+  HID_HandleTypeDef *HID_Handle =  (HID_HandleTypeDef *) phost->pActiveClass->pData_Keyb;  
     
   keybd_info.lctrl=keybd_info.lshift= 0;
   keybd_info.lalt=keybd_info.lgui= 0;
@@ -366,7 +366,7 @@ static USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost)
 {
   uint8_t x;
   
-  HID_HandleTypeDef *HID_Handle =  (HID_HandleTypeDef *) phost->pActiveClass->pData;
+  HID_HandleTypeDef *HID_Handle =  (HID_HandleTypeDef *) phost->pActiveClass->pData_Keyb;
   if(HID_Handle->length == 0)
   {
     return USBH_FAIL;
@@ -375,18 +375,18 @@ static USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost)
   if(fifo_read(&HID_Handle->fifo, &keybd_report_data, HID_Handle->length) ==  HID_Handle->length)
   {
     
-    keybd_info.lctrl=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_lctrl, 0);
-    keybd_info.lshift=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_lshift, 0);
-    keybd_info.lalt=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_lalt, 0);
-    keybd_info.lgui=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_lgui, 0);
-    keybd_info.rctrl=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_rctrl, 0);
-    keybd_info.rshift=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_rshift, 0);
-    keybd_info.ralt=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_ralt, 0);
-    keybd_info.rgui=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_rgui, 0);
+    keybd_info.lctrl=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_lctrl, 0);
+    keybd_info.lshift=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_lshift, 0);
+    keybd_info.lalt=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_lalt, 0);
+    keybd_info.lgui=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_lgui, 0);
+    keybd_info.rctrl=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_rctrl, 0);
+    keybd_info.rshift=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_rshift, 0);
+    keybd_info.ralt=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_ralt, 0);
+    keybd_info.rgui=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_rgui, 0);
     
     for(x=0; x < sizeof(keybd_info.keys); x++)
     {    
-      keybd_info.keys[x]=(uint8_t)HID_ReadItem((HID_Report_ItemTypedef *) &imp_0_key_array, x);
+      keybd_info.keys[x]=(uint8_t)HID_ReadItem((const HID_Report_ItemTypedef *) &imp_0_key_array, x);
     }
     
     return USBH_OK; 

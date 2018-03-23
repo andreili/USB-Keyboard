@@ -97,7 +97,7 @@
   * @param  ndx: report index
 * @retval status (0 : fail / otherwise: item value)
   */
-uint32_t HID_ReadItem(HID_Report_ItemTypedef *ri, uint8_t ndx)
+uint32_t HID_ReadItem(const HID_Report_ItemTypedef *ri, uint8_t ndx)
 {
   uint32_t val=0;
   uint32_t x=0;
@@ -165,7 +165,7 @@ uint32_t HID_ReadItem(HID_Report_ItemTypedef *ri, uint8_t ndx)
   * @param  ndx: report index
   * @retval status (1: fail/ 0 : Ok)
   */
-uint32_t HID_WriteItem(HID_Report_ItemTypedef *ri, uint32_t value, uint8_t ndx)
+uint32_t HID_WriteItem(const HID_Report_ItemTypedef *ri, uint32_t value, uint8_t ndx)
 {
   uint32_t x;
   uint32_t mask;

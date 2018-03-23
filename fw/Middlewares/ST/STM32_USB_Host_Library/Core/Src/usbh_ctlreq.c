@@ -207,6 +207,7 @@ USBH_StatusTypeDef USBH_GetDescriptor(USBH_HandleTypeDef *phost,
                                uint8_t* buff, 
                                uint16_t length )
 { 
+	USBH_UsrLog("USBH GetDescriptor: %i", phost->RequestState);
   if(phost->RequestState == CMD_SEND)
   {
     phost->Control.setup.b.bmRequestType = USB_D2H | req_type;

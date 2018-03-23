@@ -384,6 +384,13 @@ void GUI_Text(uint16_t Xpos, uint16_t Ypos, char *str,uint16_t Color, uint16_t b
     do
     {
         TempChar = *str++;  
+				if (TempChar == '\n')
+        {
+            Xpos = 0;
+            Ypos += 16;
+						continue;
+        } 
+				
         PutChar( Xpos, Ypos, TempChar, Color, bkColor );    
         if( Xpos < MAX_X - 8 )
         {
