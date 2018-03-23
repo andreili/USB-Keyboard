@@ -1,5 +1,5 @@
 EESchema Schematic File Version 2
-LIBS:usb_keyb-rescue
+LIBS:mem
 LIBS:power
 LIBS:device
 LIBS:switches
@@ -32,8 +32,6 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:stm32
-LIBS:stm_var
 LIBS:usb_keyb-cache
 EELAYER 25 0
 EELAYER END
@@ -1718,17 +1716,6 @@ F 3 "" H 9300 2000 50  0000 C CNN
 	1    9300 2000
 	1    0    0    -1  
 $EndComp
-$Comp
-L Conn_02x32_Row_Letter_Last J11
-U 1 1 5ABDA855
-P 13500 3850
-F 0 "J11" H 13550 5450 50  0000 C CNN
-F 1 "ZX-BUS" H 13550 2150 50  0000 C CNN
-F 2 "Connectors_IEC_DIN:Socket_DIN41612-CaseC1-AC-Female-64Pin-2rows" H 13500 3850 50  0001 C CNN
-F 3 "" H 13500 3850 50  0001 C CNN
-	1    13500 3850
-	1    0    0    -1  
-$EndComp
 Text GLabel 12450 1650 2    60   Input ~ 0
 ZIORQn
 Text GLabel 12450 1750 2    60   Input ~ 0
@@ -3049,7 +3036,7 @@ U 1 1 5AAFE496
 P 4950 1250
 F 0 "J3" H 5075 1600 50  0000 L CNN
 F 1 "USB_1" H 4750 1600 50  0000 L CNN
-F 2 "w_conn_pc:conn_usb_Ax2" H 5100 1200 50  0001 C CNN
+F 2 "Projects:conn_usb_Ax2" H 5100 1200 50  0001 C CNN
 F 3 "" H 5100 1200 50  0001 C CNN
 	1    4950 1250
 	-1   0    0    -1  
@@ -3101,4 +3088,55 @@ Text GLabel 10750 4550 2    60   Input ~ 0
 TX
 Text GLabel 10750 4650 2    60   Input ~ 0
 RX
+$Comp
+L Conn_02x28_Row_Letter_Last J4
+U 1 1 5AB497AB
+P 13500 3650
+F 0 "J4" H 13550 5050 50  0000 C CNN
+F 1 "ZX-BUS" H 13550 2150 50  0000 C CNN
+F 2 "Projects:Socket_DIN41612-CaseC1-AB-Female-56Pin-2rows" H 13500 3650 50  0001 C CNN
+F 3 "" H 13500 3650 50  0001 C CNN
+	1    13500 3650
+	1    0    0    -1  
+$EndComp
+Text GLabel 1750 8450 0    60   Input ~ 0
+FSMC_D0
+Text GLabel 1750 8550 0    60   Input ~ 0
+FSMC_D1
+Text GLabel 1750 7050 0    60   Input ~ 0
+FSMC_D2
+Text GLabel 1750 7150 0    60   Input ~ 0
+FSMC_D3
+Text GLabel 1750 6050 0    60   Input ~ 0
+FSMC_D4
+Text GLabel 1750 6150 0    60   Input ~ 0
+FSMC_D5
+Text GLabel 1750 6250 0    60   Input ~ 0
+FSMC_D6
+Text GLabel 1750 6350 0    60   Input ~ 0
+FSMC_D7
+Text GLabel 1750 6450 0    60   Input ~ 0
+FSMC_D8
+Text GLabel 1750 6550 0    60   Input ~ 0
+FSMC_D9
+Text GLabel 1750 6650 0    60   Input ~ 0
+FSMC_D10
+Text GLabel 1750 6750 0    60   Input ~ 0
+FSMC_D11
+Text GLabel 1750 6850 0    60   Input ~ 0
+FSMC_D12
+Text GLabel 1750 7850 0    60   Input ~ 0
+FSMC_D13
+Text GLabel 1750 7950 0    60   Input ~ 0
+FSMC_D14
+Text GLabel 1750 8050 0    60   Input ~ 0
+FSMC_D15
+Text GLabel 1750 7450 0    60   Input ~ 0
+FSMC_NOE
+Text GLabel 1750 7550 0    60   Input ~ 0
+FSMC_NWE
+Text GLabel 1750 7750 0    60   Input ~ 0
+FSMC_NE1
+Text GLabel 1750 8150 0    60   Input ~ 0
+FSMC_A16
 $EndSCHEMATC

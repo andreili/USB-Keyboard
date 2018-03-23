@@ -61,6 +61,10 @@
 
 #define FS_PWR_DS_Pin GPIO_PIN_0
 #define FS_PWR_DS_GPIO_Port GPIOC
+#define LED4_Pin GPIO_PIN_12
+#define LED4_GPIO_Port GPIOD
+#define LED3_Pin GPIO_PIN_13
+#define LED3_GPIO_Port GPIOD
 #define HS_PWR_Pin GPIO_PIN_6
 #define HS_PWR_GPIO_Port GPIOC
 #define SDIO_CD_Pin GPIO_PIN_7

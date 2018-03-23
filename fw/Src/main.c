@@ -180,16 +180,16 @@ int main(void)
   GUIHandle = osThreadCreate(osThread(GUI), NULL);
 
   /* definition and creation of Matrix */
-  osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 128);
-  MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
+  //osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 128);
+  //MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
 
   /* definition and creation of PS2 */
-  osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
-  PS2Handle = osThreadCreate(osThread(PS2), NULL);
+  //osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
+  //PS2Handle = osThreadCreate(osThread(PS2), NULL);
 
   /* definition and creation of zxbus */
-  osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
-  zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
+  //osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
+  //zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -517,7 +517,7 @@ void task_USB(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		fill_matrix(0);
+		//fill_matrix(0);
     osDelay(1);
   }
   /* USER CODE END 5 */ 
@@ -528,7 +528,7 @@ void task_GUI(void const * argument)
 {
   /* USER CODE BEGIN task_GUI */
 	init_GUI();
-	main_GUI();
+	//main_GUI();
   /* USER CODE END task_GUI */
 }
 
