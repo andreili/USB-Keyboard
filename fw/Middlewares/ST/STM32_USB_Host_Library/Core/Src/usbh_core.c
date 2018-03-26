@@ -400,12 +400,6 @@ USBH_StatusTypeDef  USBH_Process(USBH_HandleTypeDef *phost)
   uint8_t idx = 0;
 	
 	USBH_UsrLog("USBH State: %i", phost->gState);
-	
-	if (!phost->device.is_connected)
-	{
-		if (phost->gState != HOST_DEV_DISCONNECTED)
-			phost->gState = HOST_DEV_DISCONNECTED;
-	}
   
   switch (phost->gState)
   {
@@ -413,9 +407,10 @@ USBH_StatusTypeDef  USBH_Process(USBH_HandleTypeDef *phost)
     
     if (phost->device.is_connected)  
     {
-      phost->gState = HOST_DEV_ATTACHED; 
+      /* Wait for 200 ms after connection */
+      phost->gState = HOST_DEV_WAIT_FOR_ATTACHMENT; 
+      USBH_Delay(200); 
       USBH_LL_ResetPort(phost);
-      USBH_Delay(100); 
 #if (USBH_USE_OS == 1)
       osMessagePut ( phost->os_event, USBH_PORT_EVENT, 0);
 #endif
@@ -428,13 +423,16 @@ USBH_StatusTypeDef  USBH_Process(USBH_HandleTypeDef *phost)
   case HOST_DEV_ATTACHED :
     
     USBH_UsrLog("USB Device Attached");  
-    
-    phost->Control.pipe_out = USBH_AllocPipe (phost, 0x00);
-    phost->Control.pipe_in  = USBH_AllocPipe (phost, 0x80); 
+      
+    /* Wait for 100 ms after Reset */
+    USBH_Delay(100); 
           
     phost->device.speed = USBH_LL_GetSpeed(phost);
     
-    phost->gState = HOST_ENUMERATION;  
+    phost->gState = HOST_ENUMERATION;
+    
+    phost->Control.pipe_out = USBH_AllocPipe (phost, 0x00);
+    phost->Control.pipe_in  = USBH_AllocPipe (phost, 0x80);    
     
     
     /* Open Control pipes */
@@ -905,7 +903,6 @@ static void USBH_Process_OS(void const * argument)
     {
       USBH_Process((USBH_HandleTypeDef *)argument);
     }
-		//osDelay(1);
    }
 }
 

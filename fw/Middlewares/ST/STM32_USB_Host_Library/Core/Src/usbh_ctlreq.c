@@ -597,7 +597,6 @@ static USBH_StatusTypeDef USBH_HandleControl (USBH_HandleTypeDef *phost)
     break; 
     
   case CTRL_SETUP_WAIT:
-    
     URB_Status = USBH_LL_GetURBState(phost, phost->Control.pipe_out); 
     /* case SETUP packet sent successfully */
     if(URB_Status == USBH_URB_DONE)

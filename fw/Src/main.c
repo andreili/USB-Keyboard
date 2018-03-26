@@ -105,6 +105,9 @@ void LCD_fill_mem(void);
 
 /* USER CODE BEGIN 0 */
 
+extern USBH_HandleTypeDef hUsbHostHS;
+extern USBH_HandleTypeDef hUsbHostFS;
+
 /* USER CODE END 0 */
 
 /**
@@ -172,7 +175,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of USB */
-  osThreadDef(USB, task_USB, osPriorityNormal, 0, 1024);
+  osThreadDef(USB, task_USB, osPriorityNormal, 0, 2048);
   USBHandle = osThreadCreate(osThread(USB), NULL);
 
   /* definition and creation of GUI */
@@ -184,12 +187,12 @@ int main(void)
   MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
 
   /* definition and creation of PS2 */
-//  osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
-//  PS2Handle = osThreadCreate(osThread(PS2), NULL);
+  osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
+  PS2Handle = osThreadCreate(osThread(PS2), NULL);
 
   /* definition and creation of zxbus */
- // osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
- // zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
+  osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
+  zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -364,7 +367,6 @@ static void MX_USART1_UART_Init(void)
         * EXTI
         * Free pins are configured automatically as Analog (this feature is enabled through 
         * the Code Generation settings)
-     PD3   ------> USART2_CTS
      PD6   ------> USART2_RX
 */
 static void MX_GPIO_Init(void)
@@ -381,13 +383,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, FS_PWR_DS_Pin|HS_PWR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0|GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LED4_Pin|LED3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(FS_PWR_GPIO_Port, FS_PWR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PE2 PE3 PE4 PE5 
                            PE6 PE0 PE1 */
@@ -405,8 +407,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FS_PWR_DS_Pin HS_PWR_Pin */
-  GPIO_InitStruct.Pin = FS_PWR_DS_Pin|HS_PWR_Pin;
+  /*Configure GPIO pins : PC0 PC6 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -430,28 +432,34 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED4_Pin LED3_Pin */
-  GPIO_InitStruct.Pin = LED4_Pin|LED3_Pin;
+  /*Configure GPIO pins : PD12 PD13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SDIO_CD_Pin */
-  GPIO_InitStruct.Pin = SDIO_CD_Pin;
+  /*Configure GPIO pin : PC7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(SDIO_CD_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : FS_PWR_Pin */
-  GPIO_InitStruct.Pin = FS_PWR_Pin;
+  /*Configure GPIO pin : PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(FS_PWR_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD3 PD6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_6;
+  /*Configure GPIO pin : PD3 */
+  GPIO_InitStruct.Pin = GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PD6 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -511,16 +519,18 @@ void task_USB(void const * argument)
   /* init code for FATFS */
   //MX_FATFS_Init();
 
-  /* init code for LWIP */
-  //MX_LWIP_Init();
-
   /* init code for USB_HOST */
   MX_USB_HOST_Init();
+
+  /* init code for LWIP */
+ // MX_LWIP_Init();
 
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
+	//	USBH_Process(&hUsbHostHS);
+		//USBH_Process(&hUsbHostFS);
 		//fill_matrix(0);
 		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
     osDelay(1);

@@ -444,8 +444,6 @@ typedef struct
   USBH_StatusTypeDef  (*BgndProcess) (struct _USBH_HandleTypeDef *phost);
   USBH_StatusTypeDef  (*SOFProcess) (struct _USBH_HandleTypeDef *phost);  
   void*                pData;
-  void*                pData_Keyb;
-  void*                pData_Mouse;
 } USBH_ClassTypeDef;
 
 /* USB Host handle structure */
