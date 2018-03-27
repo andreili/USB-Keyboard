@@ -516,6 +516,7 @@ static void MX_FSMC_Init(void)
 /* task_USB function */
 void task_USB(void const * argument)
 {
+	osDelay(500);
   /* init code for FATFS */
   //MX_FATFS_Init();
 
@@ -530,8 +531,8 @@ void task_USB(void const * argument)
   for(;;)
   {
 	//	USBH_Process(&hUsbHostHS);
-		//USBH_Process(&hUsbHostFS);
-		//fill_matrix(0);
+		USBH_Process(&hUsbHostFS);
+		fill_matrix(0);
 		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
     osDelay(1);
   }
