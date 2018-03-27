@@ -376,8 +376,6 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
                             HID_Handle->pData,
                             HID_Handle->length) == USBH_OK)
     {
-      
-      fifo_write(&HID_Handle->fifo, HID_Handle->pData, HID_Handle->length);  
       HID_Handle->state = HID_SYNC;
     }
     
@@ -413,7 +411,6 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
     {
       if(HID_Handle->DataReady == 0)
       {
-        fifo_write(&HID_Handle->fifo, HID_Handle->pData, HID_Handle->length);
         HID_Handle->DataReady = 1;
 				if (HID_Handle->Proc != NULL)
 					HID_Handle->Proc(HID_Handle->pData, HID_Handle->length);
@@ -701,99 +698,6 @@ uint8_t USBH_HID_GetPollInterval(USBH_HandleTypeDef *phost)
   {
     return 0;
   }
-}
-/**
-  * @brief  fifo_init
-  *         Initialize FIFO.
-  * @param  f: Fifo address
-  * @param  buf: Fifo buffer
-  * @param  size: Fifo Size
-  * @retval none
-  */
-void fifo_init(FIFO_TypeDef * f, uint8_t * buf, uint16_t size)
-{
-     f->head = 0;
-     f->tail = 0;
-     f->lock = 0;
-     f->size = size;
-     f->buf = buf;
-}
-
-/**
-  * @brief  fifo_read
-  *         Read from FIFO.
-  * @param  f: Fifo address
-  * @param  buf: read buffer 
-  * @param  nbytes: number of item to read
-  * @retval number of read items
-  */
-uint16_t  fifo_read(FIFO_TypeDef * f, void * buf, uint16_t  nbytes)
-{
-  uint16_t  i;
-  uint8_t * p;
-  p = (uint8_t*) buf;
-  
-  if(f->lock == 0)
-  {
-    f->lock = 1;
-    for(i=0; i < nbytes; i++)
-    {
-      if( f->tail != f->head )
-      { 
-        *p++ = f->buf[f->tail];  
-        f->tail++;  
-        if( f->tail == f->size )
-        {  
-          f->tail = 0;
-        }
-      } else 
-      {
-        f->lock = 0;
-        return i; 
-      }
-    }
-  }
-  f->lock = 0;
-  return nbytes;
-}
- 
-/**
-  * @brief  fifo_write
-  *         Read from FIFO.
-  * @param  f: Fifo address
-  * @param  buf: read buffer 
-  * @param  nbytes: number of item to write
-  * @retval number of written items
-  */
-uint16_t  fifo_write(FIFO_TypeDef * f, const void * buf, uint16_t  nbytes)
-{
-  uint16_t  i;
-  const uint8_t * p;
-  p = (const uint8_t*) buf;
-  if(f->lock == 0)
-  {
-    f->lock = 1;
-    for(i=0; i < nbytes; i++)
-    {
-      if( (f->head + 1 == f->tail) ||
-         ( (f->head + 1 == f->size) && (f->tail == 0)) )
-      {
-        f->lock = 0;
-        return i;
-      } 
-      else 
-      {
-        f->buf[f->head] = *p++;
-        f->head++;
-        if( f->head == f->size )
-        {
-          f->head = 0;
-        }
-      }
-    }
-  }
-  f->lock = 0;
-  return nbytes;
 }
 
 

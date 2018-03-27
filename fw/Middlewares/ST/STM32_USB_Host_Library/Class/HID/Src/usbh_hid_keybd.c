@@ -122,7 +122,6 @@ USBH_StatusTypeDef USBH_HID_KeybdInit(USBH_HandleTypeDef *phost)
     HID_Handle->length = (sizeof(keybd_report_data)/sizeof(uint32_t));
   }
   HID_Handle->pData = (uint8_t*)keybd_report_data;
-  fifo_init(&HID_Handle->fifo, phost->device.Data, HID_QUEUE_SIZE * sizeof(keybd_report_data));
   
   return USBH_OK;    
 }

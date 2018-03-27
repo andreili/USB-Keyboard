@@ -202,16 +202,6 @@ typedef struct _HIDDescriptor
 HID_DescTypeDef;
 
 
-typedef struct 
-{
-     uint8_t  *buf;
-     uint16_t  head;
-     uint16_t tail;
-     uint16_t size;
-     uint8_t  lock;
-} FIFO_TypeDef;
-
-
 /* Structure for HID process */
 typedef struct _HID_Process
 {
@@ -221,7 +211,6 @@ typedef struct _HID_Process
   uint8_t              OutEp;
   uint8_t              InEp;
   HID_CtlStateTypeDef  ctl_state;
-  FIFO_TypeDef         fifo; 
   uint8_t              *pData;   
   uint16_t             length;
   uint8_t              ep_addr;
@@ -315,12 +304,6 @@ void USBH_HID_EventCallback(USBH_HandleTypeDef *phost);
 HID_TypeTypeDef USBH_HID_GetDeviceType(USBH_HandleTypeDef *phost);
 
 uint8_t USBH_HID_GetPollInterval(USBH_HandleTypeDef *phost);
-
-void fifo_init(FIFO_TypeDef * f, uint8_t * buf, uint16_t size);
-
-uint16_t  fifo_read(FIFO_TypeDef * f, void * buf, uint16_t  nbytes);
-
-uint16_t  fifo_write(FIFO_TypeDef * f, const void * buf, uint16_t  nbytes);
 
 /**
   * @}
