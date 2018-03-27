@@ -398,8 +398,6 @@ USBH_StatusTypeDef  USBH_Process(USBH_HandleTypeDef *phost)
 {
   __IO USBH_StatusTypeDef status = USBH_FAIL;
   uint8_t idx = 0;
-	
-	USBH_UsrLog("USBH State: %i", phost->gState);
   
   switch (phost->gState)
   {
@@ -610,9 +608,7 @@ USBH_StatusTypeDef  USBH_Process(USBH_HandleTypeDef *phost)
   */
 static USBH_StatusTypeDef USBH_HandleEnum (USBH_HandleTypeDef *phost)
 {
-  USBH_StatusTypeDef Status = USBH_BUSY;  
-  
-	USBH_UsrLog("USBH HandleEnum: %i", phost->EnumState);
+  USBH_StatusTypeDef Status = USBH_BUSY;
 	
   switch (phost->EnumState)
   {
