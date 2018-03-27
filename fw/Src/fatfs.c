@@ -51,11 +51,9 @@
 uint8_t retSD;    /* Return value for SD */
 char SDPath[4];   /* SD logical drive path */
 FATFS SDFatFS;    /* File system object for SD logical drive */
-FIL SDFile;       /* File object for SD */
 uint8_t retUSBH;    /* Return value for USBH */
 char USBHPath[4];   /* USBH logical drive path */
 FATFS USBHFatFS;    /* File system object for USBH logical drive */
-FIL USBHFile;       /* File object for USBH */
 
 /* USER CODE BEGIN Variables */
 
