@@ -39,6 +39,8 @@ extern uint32_t fw_crc;
 extern uint32_t fw_crc_base;
 extern HID_KEYBD_Info_TypeDef     keybd_info;
 
+extern size_t xFreeBytesRemaining;
+
 void main_GUI(void)
 {
   osDelay(10);
@@ -82,8 +84,8 @@ void main_GUI(void)
 	{
 		//LED_3_ON();
 		
-		sprintf(buf, "HID: (%02X) %02X %02X %02X %02X %02X %02X", keybd_info.alt_keys, keybd_info.keys[0], keybd_info.keys[1], 
-				keybd_info.keys[2], keybd_info.keys[3], keybd_info.keys[4], keybd_info.keys[5]);
+		sprintf(buf, "HID: (%02X) %02X %02X %02X %02X %02X %02X - SF: %i", keybd_info.alt_keys, keybd_info.keys[0], keybd_info.keys[1], 
+				keybd_info.keys[2], keybd_info.keys[3], keybd_info.keys[4], keybd_info.keys[5], xFreeBytesRemaining);
 		GUI_Text(0, 0, buf, White, Black);
 		
 		for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
