@@ -57,6 +57,7 @@
 /* USER CODE BEGIN Includes */
 #include "gui_all.h"
 #include "kbd_matrix.h"
+#include "ps2.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -64,6 +65,7 @@ IWDG_HandleTypeDef hiwdg;
 
 SD_HandleTypeDef hsd;
 
+TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart6;
@@ -92,6 +94,7 @@ static void MX_IWDG_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_USART6_UART_Init(void);
+static void MX_TIM2_Init(void);
 void task_USB(void const * argument);
 void task_GUI(void const * argument);
 void task_matrix(void const * argument);
@@ -144,6 +147,7 @@ int main(void)
   MX_SDIO_SD_Init();
   MX_TIM4_Init();
   MX_USART6_UART_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -308,6 +312,51 @@ static void MX_SDIO_SD_Init(void)
 
 }
 
+/* TIM2 init function */
+static void MX_TIM2_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_OC_InitTypeDef sConfigOC;
+
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = PS2_CLK_PRESCALER - 1;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED3;
+  htim2.Init.Period = (PS2_CLK_PERIOD / 2) - 1;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  if (HAL_TIM_OC_Init(&htim2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfigOC.OCMode = TIM_OCMODE_TIMING;
+  sConfigOC.Pulse = (PS2_CLK_PERIOD / 4) - 1;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfigOC.Pulse = (PS2_CLK_PERIOD / 2) - 1;
+  if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* TIM4 init function */
 static void MX_TIM4_Init(void)
 {
@@ -386,7 +435,7 @@ static void MX_GPIO_Init(void)
                           |ZM1n_Pin|ZINTn_Pin|ZNMIn_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(FS_PWR_GPIO_Port, FS_PWR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, FS_PWR_Pin|PS2_CLK_Pin|PS2_DAT_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, ZD0_Pin|ZD1_Pin|ZD2_Pin|ZD3_Pin 
@@ -407,10 +456,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC13 PC14 PC15 PC2 
-                           PC3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_2 
-                          |GPIO_PIN_3;
+  /*Configure GPIO pins : PC13 PC14 PC15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -421,6 +468,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(FS_PWR_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PS2_CLK_Pin PS2_DAT_Pin */
+  GPIO_InitStruct.Pin = PS2_CLK_Pin|PS2_DAT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA0 PA3 PA4 PA5 
                            PA6 PA10 PA15 */
@@ -434,8 +488,8 @@ static void MX_GPIO_Init(void)
                            ZD4_Pin ZD5_Pin ZD6_Pin ZD7_Pin */
   GPIO_InitStruct.Pin = ZD0_Pin|ZD1_Pin|ZD2_Pin|ZD3_Pin 
                           |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
@@ -462,7 +516,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : SD_CD_Pin */
   GPIO_InitStruct.Pin = SD_CD_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(SD_CD_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD6 */
@@ -523,13 +577,13 @@ void task_USB(void const * argument)
 {
 	osDelay(500);
   /* init code for FATFS */
-  //MX_FATFS_Init();
+  MX_FATFS_Init();
 
   /* init code for USB_HOST */
   MX_USB_HOST_Init();
 
   /* init code for LWIP */
- // MX_LWIP_Init();
+  MX_LWIP_Init();
 
   /* USER CODE BEGIN 5 */
   /* Infinite loop */

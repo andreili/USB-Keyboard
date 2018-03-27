@@ -71,6 +71,10 @@
 #define ZM1n_GPIO_Port GPIOE
 #define FS_PWR_Pin GPIO_PIN_0
 #define FS_PWR_GPIO_Port GPIOC
+#define PS2_CLK_Pin GPIO_PIN_2
+#define PS2_CLK_GPIO_Port GPIOC
+#define PS2_DAT_Pin GPIO_PIN_3
+#define PS2_DAT_GPIO_Port GPIOC
 #define ZD0_Pin GPIO_PIN_0
 #define ZD0_GPIO_Port GPIOB
 #define ZD1_Pin GPIO_PIN_1

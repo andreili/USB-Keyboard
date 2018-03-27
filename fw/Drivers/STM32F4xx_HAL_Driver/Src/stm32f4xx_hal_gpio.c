@@ -184,7 +184,7 @@
   *         the configuration information for the specified GPIO peripheral.
   * @retval None
   */
-void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
+void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, const GPIO_InitTypeDef *GPIO_Init)
 {
   uint32_t position;
   uint32_t ioposition = 0x00U;
