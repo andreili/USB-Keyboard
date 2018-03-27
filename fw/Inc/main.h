@@ -59,18 +59,48 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define FS_PWR_DS_Pin GPIO_PIN_0
-#define FS_PWR_DS_GPIO_Port GPIOC
+#define ZIORQn_Pin GPIO_PIN_2
+#define ZIORQn_GPIO_Port GPIOE
+#define ZRDn_Pin GPIO_PIN_3
+#define ZRDn_GPIO_Port GPIOE
+#define ZWRn_Pin GPIO_PIN_4
+#define ZWRn_GPIO_Port GPIOE
+#define ZMREQn_Pin GPIO_PIN_5
+#define ZMREQn_GPIO_Port GPIOE
+#define ZM1n_Pin GPIO_PIN_6
+#define ZM1n_GPIO_Port GPIOE
+#define FS_PWR_Pin GPIO_PIN_0
+#define FS_PWR_GPIO_Port GPIOC
+#define ZD0_Pin GPIO_PIN_0
+#define ZD0_GPIO_Port GPIOB
+#define ZD1_Pin GPIO_PIN_1
+#define ZD1_GPIO_Port GPIOB
+#define ZD2_Pin GPIO_PIN_2
+#define ZD2_GPIO_Port GPIOB
 #define LED4_Pin GPIO_PIN_12
 #define LED4_GPIO_Port GPIOD
 #define LED3_Pin GPIO_PIN_13
 #define LED3_GPIO_Port GPIOD
-#define HS_PWR_Pin GPIO_PIN_6
-#define HS_PWR_GPIO_Port GPIOC
-#define SDIO_CD_Pin GPIO_PIN_7
-#define SDIO_CD_GPIO_Port GPIOC
-#define FS_PWR_Pin GPIO_PIN_8
-#define FS_PWR_GPIO_Port GPIOA
+#define FS_PWR_REL_Pin GPIO_PIN_8
+#define FS_PWR_REL_GPIO_Port GPIOA
+#define HS_PWR_Pin GPIO_PIN_9
+#define HS_PWR_GPIO_Port GPIOA
+#define SD_CD_Pin GPIO_PIN_3
+#define SD_CD_GPIO_Port GPIOD
+#define ZD3_Pin GPIO_PIN_3
+#define ZD3_GPIO_Port GPIOB
+#define ZD4_Pin GPIO_PIN_4
+#define ZD4_GPIO_Port GPIOB
+#define ZD5_Pin GPIO_PIN_5
+#define ZD5_GPIO_Port GPIOB
+#define ZD6_Pin GPIO_PIN_6
+#define ZD6_GPIO_Port GPIOB
+#define ZD7_Pin GPIO_PIN_7
+#define ZD7_GPIO_Port GPIOB
+#define ZINTn_Pin GPIO_PIN_0
+#define ZINTn_GPIO_Port GPIOE
+#define ZNMIn_Pin GPIO_PIN_1
+#define ZNMIn_GPIO_Port GPIOE
 
 /* ########################## Assert Selection ############################## */
 /**

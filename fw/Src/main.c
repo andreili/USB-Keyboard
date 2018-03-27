@@ -66,7 +66,7 @@ SD_HandleTypeDef hsd;
 
 TIM_HandleTypeDef htim4;
 
-UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart6;
 
 SRAM_HandleTypeDef hsram1;
 
@@ -90,8 +90,8 @@ static void MX_GPIO_Init(void);
 static void MX_FSMC_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_SDIO_SD_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_USART6_UART_Init(void);
 void task_USB(void const * argument);
 void task_GUI(void const * argument);
 void task_matrix(void const * argument);
@@ -142,8 +142,8 @@ int main(void)
   MX_FSMC_Init();
   //MX_IWDG_Init();
   MX_SDIO_SD_Init();
-  MX_USART1_UART_Init();
   MX_TIM4_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -175,11 +175,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of USB */
-  osThreadDef(USB, task_USB, osPriorityNormal, 0, 2048);
+  osThreadDef(USB, task_USB, osPriorityNormal, 0, 512);
   USBHandle = osThreadCreate(osThread(USB), NULL);
 
   /* definition and creation of GUI */
-  osThreadDef(GUI, task_GUI, osPriorityIdle, 0, 512);
+  osThreadDef(GUI, task_GUI, osPriorityIdle, 0, 256);
   GUIHandle = osThreadCreate(osThread(GUI), NULL);
 
   /* definition and creation of Matrix */
@@ -340,19 +340,19 @@ static void MX_TIM4_Init(void)
 
 }
 
-/* USART1 init function */
-static void MX_USART1_UART_Init(void)
+/* USART6 init function */
+static void MX_USART6_UART_Init(void)
 {
 
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
+  huart6.Instance = USART6;
+  huart6.Init.BaudRate = 115200;
+  huart6.Init.WordLength = UART_WORDLENGTH_8B;
+  huart6.Init.StopBits = UART_STOPBITS_1;
+  huart6.Init.Parity = UART_PARITY_NONE;
+  huart6.Init.Mode = UART_MODE_TX_RX;
+  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart6) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -367,7 +367,6 @@ static void MX_USART1_UART_Init(void)
         * EXTI
         * Free pins are configured automatically as Analog (this feature is enabled through 
         * the Code Generation settings)
-     PD6   ------> USART2_RX
 */
 static void MX_GPIO_Init(void)
 {
@@ -383,20 +382,29 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0|GPIO_PIN_6, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, ZIORQn_Pin|ZRDn_Pin|ZWRn_Pin|ZMREQn_Pin 
+                          |ZM1n_Pin|ZINTn_Pin|ZNMIn_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(FS_PWR_GPIO_Port, FS_PWR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, ZD0_Pin|ZD1_Pin|ZD2_Pin|ZD3_Pin 
+                          |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PE2 PE3 PE4 PE5 
-                           PE6 PE0 PE1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5 
-                          |GPIO_PIN_6|GPIO_PIN_0|GPIO_PIN_1;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, LED4_Pin|LED3_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, FS_PWR_REL_Pin|HS_PWR_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : ZIORQn_Pin ZRDn_Pin ZWRn_Pin ZMREQn_Pin 
+                           ZM1n_Pin ZINTn_Pin ZNMIn_Pin */
+  GPIO_InitStruct.Pin = ZIORQn_Pin|ZRDn_Pin|ZWRn_Pin|ZMREQn_Pin 
+                          |ZM1n_Pin|ZINTn_Pin|ZNMIn_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PC13 PC14 PC15 PC2 
@@ -407,63 +415,60 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC0 PC6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_6;
+  /*Configure GPIO pin : FS_PWR_Pin */
+  GPIO_InitStruct.Pin = FS_PWR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(FS_PWR_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA0 PA3 PA4 PA5 
-                           PA6 PA15 */
+                           PA6 PA10 PA15 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5 
-                          |GPIO_PIN_6|GPIO_PIN_15;
+                          |GPIO_PIN_6|GPIO_PIN_10|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB0 PB1 PB2 PB10 
-                           PB3 PB4 PB5 PB6 
-                           PB7 PB8 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_10 
-                          |GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6 
-                          |GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
+  /*Configure GPIO pins : ZD0_Pin ZD1_Pin ZD2_Pin ZD3_Pin 
+                           ZD4_Pin ZD5_Pin ZD6_Pin ZD7_Pin */
+  GPIO_InitStruct.Pin = ZD0_Pin|ZD1_Pin|ZD2_Pin|ZD3_Pin 
+                          |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB10 PB8 PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD12 PD13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
+  /*Configure GPIO pins : LED4_Pin LED3_Pin */
+  GPIO_InitStruct.Pin = LED4_Pin|LED3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PA8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  /*Configure GPIO pins : FS_PWR_REL_Pin HS_PWR_Pin */
+  GPIO_InitStruct.Pin = FS_PWR_REL_Pin|HS_PWR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PD3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  /*Configure GPIO pin : SD_CD_Pin */
+  GPIO_InitStruct.Pin = SD_CD_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+  HAL_GPIO_Init(SD_CD_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD6 */
   GPIO_InitStruct.Pin = GPIO_PIN_6;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
 }
