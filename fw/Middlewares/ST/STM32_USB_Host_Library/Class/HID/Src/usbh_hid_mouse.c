@@ -73,7 +73,7 @@
 /** @defgroup USBH_HID_MOUSE_Private_FunctionPrototypes
   * @{
   */ 
-static USBH_StatusTypeDef USBH_HID_MouseDecode(USBH_HandleTypeDef *phost);
+USBH_StatusTypeDef USBH_HID_MouseDecode(USBH_HandleTypeDef *phost);
 
 /**
   * @}
@@ -219,7 +219,7 @@ HID_MOUSE_Info_TypeDef *USBH_HID_GetMouseInfo(USBH_HandleTypeDef *phost)
   * @param  phost: Host handle
   * @retval USBH Status
   */
-static USBH_StatusTypeDef USBH_HID_MouseDecode(USBH_HandleTypeDef *phost)
+USBH_StatusTypeDef USBH_HID_MouseDecode(USBH_HandleTypeDef *phost)
 {
   HID_HandleTypeDef *HID_Handle = (HID_HandleTypeDef *) phost->pActiveClass->pData;
   

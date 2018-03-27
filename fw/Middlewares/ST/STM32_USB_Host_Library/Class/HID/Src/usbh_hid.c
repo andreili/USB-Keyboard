@@ -106,7 +106,9 @@ static USBH_StatusTypeDef USBH_HID_SOFProcess(USBH_HandleTypeDef *phost);
 static void  USBH_HID_ParseHIDDesc (HID_DescTypeDef *desc, uint8_t *buf);
 
 extern USBH_StatusTypeDef USBH_HID_MouseInit(USBH_HandleTypeDef *phost);
-extern USBH_StatusTypeDef USBH_HID_KeybdInit(USBH_HandleTypeDef *phost);
+extern USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost);
+extern USBH_StatusTypeDef USBH_HID_MouseInit(USBH_HandleTypeDef *phost);
+extern USBH_StatusTypeDef USBH_HID_MouseDecode(USBH_HandleTypeDef *phost);
 
 USBH_ClassTypeDef  HID_Class = 
 {
@@ -157,17 +159,21 @@ static USBH_StatusTypeDef USBH_HID_InterfaceInit (USBH_HandleTypeDef *phost)
     phost->pActiveClass->pData = (HID_HandleTypeDef *)USBH_malloc (sizeof(HID_HandleTypeDef));
     HID_Handle =  (HID_HandleTypeDef *) phost->pActiveClass->pData; 
     HID_Handle->state = HID_ERROR;
+		HID_Handle->Init = NULL;
+		HID_Handle->Proc = NULL;
     
     /*Decode Bootclass Protocol: Mouse or Keyboard*/
     if(phost->device.CfgDesc.Itf_Desc[phost->device.current_interface].bInterfaceProtocol == HID_KEYBRD_BOOT_CODE)
     {
       USBH_UsrLog ("KeyBoard device found!"); 
-      HID_Handle->Init =  USBH_HID_KeybdInit;     
+      HID_Handle->Init =  USBH_HID_KeybdInit;
+			HID_Handle->Proc = USBH_HID_KeybdDecode;
     }
     else if(phost->device.CfgDesc.Itf_Desc[phost->device.current_interface].bInterfaceProtocol  == HID_MOUSE_BOOT_CODE)		  
     {
       USBH_UsrLog ("Mouse device found!");         
-      HID_Handle->Init =  USBH_HID_MouseInit;     
+      HID_Handle->Init =  USBH_HID_MouseInit;
+			HID_Handle->Proc = USBH_HID_MouseDecode;
     }
     else
     {
@@ -409,7 +415,8 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
       {
         fifo_write(&HID_Handle->fifo, HID_Handle->pData, HID_Handle->length);
         HID_Handle->DataReady = 1;
-        USBH_HID_EventCallback(phost);
+				if (HID_Handle->Proc != NULL)
+					HID_Handle->Proc(phost);
 #if (USBH_USE_OS == 1)
     osMessagePut ( phost->os_event, USBH_URB_EVENT, 0);
 #endif          

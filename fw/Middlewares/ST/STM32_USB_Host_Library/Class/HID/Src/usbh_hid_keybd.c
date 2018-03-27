@@ -86,7 +86,7 @@
 /** @defgroup USBH_HID_KEYBD_Private_FunctionPrototypes
 * @{
 */ 
-static USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost);
+USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost);
 /**
 * @}
 */ 
@@ -362,7 +362,7 @@ HID_KEYBD_Info_TypeDef *USBH_HID_GetKeybdInfo(USBH_HandleTypeDef *phost)
   * @param  phost: Host handle
   * @retval USBH Status
   */
-static USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost)
+USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost)
 {
   uint8_t x;
   
