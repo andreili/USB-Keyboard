@@ -72,8 +72,14 @@ void fill_matrix(uint32_t mode)
 	for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
 		kbd_data[i] = 0;
 	
-	//if (keys_pressed[0] != 0)
-	//	CHECK_MTX(((keys_pressed[0] & 0xff00) >> 8), kbd_matrix_f);
+	if (keybd_info.lctrl || keybd_info.rctrl)
+		CHECK_MTX(0, kbd_matrix_f);
+	if (keybd_info.lshift || keybd_info.rshift)
+		CHECK_MTX(1, kbd_matrix_f);
+	if (keybd_info.lalt || keybd_info.ralt)
+		CHECK_MTX(2, kbd_matrix_f);
+	if (keybd_info.lgui || keybd_info.rgui)
+		CHECK_MTX(3, kbd_matrix_f);
 	
 	for (int i=0 ; i<6 ; ++i)
 	{

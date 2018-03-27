@@ -106,9 +106,9 @@ static USBH_StatusTypeDef USBH_HID_SOFProcess(USBH_HandleTypeDef *phost);
 static void  USBH_HID_ParseHIDDesc (HID_DescTypeDef *desc, uint8_t *buf);
 
 extern USBH_StatusTypeDef USBH_HID_MouseInit(USBH_HandleTypeDef *phost);
-extern USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost);
+extern USBH_StatusTypeDef USBH_HID_KeybdDecode(uint8_t* pData, int length);
 extern USBH_StatusTypeDef USBH_HID_MouseInit(USBH_HandleTypeDef *phost);
-extern USBH_StatusTypeDef USBH_HID_MouseDecode(USBH_HandleTypeDef *phost);
+extern USBH_StatusTypeDef USBH_HID_MouseDecode(uint8_t* pData, int length);
 
 USBH_ClassTypeDef  HID_Class = 
 {
@@ -416,7 +416,7 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
         fifo_write(&HID_Handle->fifo, HID_Handle->pData, HID_Handle->length);
         HID_Handle->DataReady = 1;
 				if (HID_Handle->Proc != NULL)
-					HID_Handle->Proc(phost);
+					HID_Handle->Proc(HID_Handle->pData, HID_Handle->length);
 #if (USBH_USE_OS == 1)
     osMessagePut ( phost->os_event, USBH_URB_EVENT, 0);
 #endif          

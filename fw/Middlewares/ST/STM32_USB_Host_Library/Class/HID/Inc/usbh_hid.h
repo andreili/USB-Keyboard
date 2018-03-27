@@ -230,7 +230,7 @@ typedef struct _HID_Process
   uint8_t              DataReady;
   HID_DescTypeDef      HID_Desc;  
   USBH_StatusTypeDef  ( * Init)(USBH_HandleTypeDef *phost);
-  USBH_StatusTypeDef  ( * Proc)(USBH_HandleTypeDef *phost);
+  USBH_StatusTypeDef  ( * Proc)(uint8_t* pData, int length);
 }
 HID_HandleTypeDef;
 

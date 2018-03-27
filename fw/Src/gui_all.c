@@ -82,7 +82,7 @@ void main_GUI(void)
 	{
 		//LED_3_ON();
 		
-		sprintf(buf, "HID: %04X %04X %04X %04X %04X %04X", keybd_info.keys[0], keybd_info.keys[1], 
+		sprintf(buf, "HID: (%02X) %02X %02X %02X %02X %02X %02X", keybd_info.alt_keys, keybd_info.keys[0], keybd_info.keys[1], 
 				keybd_info.keys[2], keybd_info.keys[3], keybd_info.keys[4], keybd_info.keys[5]);
 		GUI_Text(0, 0, buf, White, Black);
 		
