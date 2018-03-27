@@ -261,7 +261,7 @@ USBH_StatusTypeDef USBH_LL_Init(USBH_HandleTypeDef *phost)
   hhcd_USB_OTG_FS.Init.speed = HCD_SPEED_FULL;
   hhcd_USB_OTG_FS.Init.dma_enable = DISABLE;
   hhcd_USB_OTG_FS.Init.phy_itface = HCD_PHY_EMBEDDED;
-  hhcd_USB_OTG_FS.Init.Sof_enable = ENABLE;
+  hhcd_USB_OTG_FS.Init.Sof_enable = DISABLE;
   if (HAL_HCD_Init(&hhcd_USB_OTG_FS) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
