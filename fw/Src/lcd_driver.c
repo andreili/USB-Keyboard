@@ -7,8 +7,6 @@
 
 extern TIM_HandleTypeDef htim4;
 
-#define BUF_MAX_Y (MAX_Y/16)
-
 #define LCD_REG              (*((volatile unsigned short *) 0x60000000)) /* RS = 0 */
 #define LCD_RAM              (*((volatile unsigned short *) 0x60020000)) /* RS = 1 */
 

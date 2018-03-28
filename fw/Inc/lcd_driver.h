@@ -17,6 +17,8 @@
 	#define  MAX_Y  320   
 #endif
 
+#define BUF_MAX_Y (MAX_Y/16)
+
 #define White          0xFFFF
 #define Black          0x0000
 #define Grey           0xF7DE
