@@ -13,6 +13,9 @@
 #define SW_MODE_RK86		0x01
 #define SW_MODE_MC7007	0x02
 
+#define SW_MODE_RK86		0x01
+#define SW_MODE_MC7007	0x02
+
 extern uint16_t kbd_data[KBD_MATRIX_ROW];
 
 uint16_t proc_row(uint16_t col_data);

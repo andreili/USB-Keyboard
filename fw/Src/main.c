@@ -626,7 +626,8 @@ void task_matrix(void const * argument)
 void task_ps2(void const * argument)
 {
   /* USER CODE BEGIN task_ps2 */
-  /* Infinite loop */
+	osDelay(500);
+  PS2_init();
   for(;;)
   {
     osDelay(1);

@@ -5,10 +5,10 @@
 
 extern uint16_t keys_pressed[KBR_MAX_NBR_PRESSED];
 
-#define LED_3_ON()	GPIOD->BSRRL = GPIO_Pin_13
-#define LED_3_OFF()	GPIOD->BSRRH = GPIO_Pin_13
-#define LED_4_ON()	GPIOD->BSRRL = GPIO_Pin_12
-#define LED_4_OFF()	GPIOD->BSRRH = GPIO_Pin_12
+#define LED_3_ON()	GPIOD->BSRR = GPIO_BSRR_BS3
+#define LED_3_OFF()	GPIOD->BSRR = GPIO_BSRR_BR3
+#define LED_4_ON()	GPIOD->BSRR = GPIO_BSRR_BS4
+#define LED_4_OFF()	GPIOD->BSRR = GPIO_BSRR_BR4
 /*#define LED_5_ON()	GPIOD->BSRRL = GPIO_Pin_14
 #define LED_5_OFF()	GPIOD->BSRRH = GPIO_Pin_14
 #define LED_6_ON()	GPIOD->BSRRL = GPIO_Pin_15

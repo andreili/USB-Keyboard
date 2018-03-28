@@ -31,6 +31,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_hid_keybd.h"
 #include "usbh_hid_parser.h"
+#include "kbd_global.h"
+#include "ps2.h"
 
 /** @addtogroup USBH_LIB
 * @{
@@ -96,6 +98,7 @@ USBH_StatusTypeDef USBH_HID_KeybdDecode(uint8_t* pData, int length);
 */
 
 HID_KEYBD_Info_TypeDef     keybd_info;
+HID_KEYBD_Info_TypeDef     keybd_info_prev;
 uint32_t                   keybd_report_data[2];
 
 /**
@@ -134,7 +137,7 @@ USBH_StatusTypeDef USBH_HID_KeybdInit(USBH_HandleTypeDef *phost)
   */
 USBH_StatusTypeDef USBH_HID_KeybdDecode(uint8_t* pData, int length)
 {
-  uint8_t x;
+  uint8_t x, y;
   
   if(length == 0)
   {
@@ -144,9 +147,47 @@ USBH_StatusTypeDef USBH_HID_KeybdDecode(uint8_t* pData, int length)
 	if (pData[2] != 1)
   {
     keybd_info.alt_keys = pData[0];
-    
+		
     for(x=0; x < sizeof(keybd_info.keys); x++)
 			keybd_info.keys[x] = pData[x + 2];
+    
+		if ((usb_mode & SW_MODE_PS2) == SW_MODE_PS2)
+		{
+			// check for released keys
+			uint8_t rel_sys = keybd_info.alt_keys & (~keybd_info_prev.alt_keys);
+			if (rel_sys)
+				PS2_add_event_sys(SET, rel_sys);
+			for (x=0 ; x<sizeof(keybd_info.keys); ++x)
+			{
+				uint8_t key = keybd_info_prev.keys[x];
+				uint8_t finded = RESET;
+				for (y=0 ; y<sizeof(keybd_info.keys); ++y)
+					if (keybd_info.keys[y] == key)
+						finded = SET;
+				if (!finded)
+					PS2_add_event(SET, key);
+			}
+		}
+    
+		if ((usb_mode & SW_MODE_PS2) == SW_MODE_PS2)
+		{
+			// check for pressed keys
+			uint8_t new_sys = (~keybd_info.alt_keys) & keybd_info_prev.alt_keys;
+			if (new_sys)
+				PS2_add_event_sys(RESET, new_sys);
+			for (x=0 ; x<sizeof(keybd_info.keys); ++x)
+			{
+				uint8_t key = keybd_info.keys[x];
+				uint8_t finded = RESET;
+				for (y=0 ; y<sizeof(keybd_info.keys); ++y)
+					if (keybd_info_prev.keys[y] == key)
+						finded = SET;
+				if (!finded)
+					PS2_add_event(RESET, key);
+			}
+			
+			memcpy(&keybd_info_prev, &keybd_info, sizeof(HID_KEYBD_Info_TypeDef));
+		}
     
     return USBH_OK; 
   }

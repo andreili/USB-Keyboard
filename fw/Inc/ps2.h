@@ -11,5 +11,7 @@
 void PS2_DataIRQHandler(void);
 void PS2_ClockIRQHandler(void);
 void PS2_init(void);
+void PS2_add_event(uint8_t is_released, uint8_t HID_scancode);
+void PS2_add_event_sys(uint8_t is_released, uint8_t HID_scancode_sys);
 
 #endif
