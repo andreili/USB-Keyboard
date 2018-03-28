@@ -20,5 +20,6 @@ extern HID_KEYBD_Info_TypeDef     keybd_info;
 #define SW_MODE_RES5		0x80
 
 extern uint8_t usb_mode;
+extern uint8_t PS2_SendRequest;
 
 #endif
