@@ -59,6 +59,7 @@
 #include "kbd_matrix.h"
 #include "ps2.h"
 #include "kbd_global.h"
+#include "mod_zxbus.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -329,8 +330,8 @@ static void MX_TIM2_Init(void)
 {
 
   TIM_ClockConfigTypeDef sClockSourceConfig;
-  TIM_OC_InitTypeDef sConfigOC;
   TIM_MasterConfigTypeDef sMasterConfig;
+  TIM_OC_InitTypeDef sConfigOC;
 
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = PS2_CLK_PRESCALER - 1;
@@ -353,6 +354,13 @@ static void MX_TIM2_Init(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
   sConfigOC.OCMode = TIM_OCMODE_TIMING;
   sConfigOC.Pulse = (PS2_CLK_PERIOD / 4) - 1;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
@@ -364,13 +372,6 @@ static void MX_TIM2_Init(void)
 
   sConfigOC.Pulse = (PS2_CLK_PERIOD / 2) - 1;
   if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -451,8 +452,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, ZIORQn_Pin|ZRDn_Pin|ZWRn_Pin|ZMREQn_Pin 
-                          |ZM1n_Pin|ZINTn_Pin|ZNMIn_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, ZMREQn_Pin|ZM1n_Pin|ZINTn_Pin|ZNMIn_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, FS_PWR_Pin|PS2_CLK_Pin|PS2_DAT_Pin, GPIO_PIN_RESET);
@@ -467,13 +467,17 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, FS_PWR_REL_Pin|HS_PWR_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : ZIORQn_Pin ZRDn_Pin ZWRn_Pin ZMREQn_Pin 
-                           ZM1n_Pin ZINTn_Pin ZNMIn_Pin */
-  GPIO_InitStruct.Pin = ZIORQn_Pin|ZRDn_Pin|ZWRn_Pin|ZMREQn_Pin 
-                          |ZM1n_Pin|ZINTn_Pin|ZNMIn_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  /*Configure GPIO pins : ZIORQn_Pin ZRDn_Pin ZWRn_Pin */
+  GPIO_InitStruct.Pin = ZIORQn_Pin|ZRDn_Pin|ZWRn_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : ZMREQn_Pin ZM1n_Pin ZINTn_Pin ZNMIn_Pin */
+  GPIO_InitStruct.Pin = ZMREQn_Pin|ZM1n_Pin|ZINTn_Pin|ZNMIn_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PC13 PC14 PC15 */
@@ -510,7 +514,7 @@ static void MX_GPIO_Init(void)
                           |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB10 PB8 PB9 */
@@ -544,6 +548,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI2_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
 
 }
 
@@ -589,6 +597,11 @@ static void MX_FSMC_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if ((usb_mode & SW_MODE_ZXBUS) == SW_MODE_ZXBUS)
+		zxbus_proc(GPIO_Pin);
+}
 
 /* USER CODE END 4 */
 
@@ -659,7 +672,7 @@ void task_ps2(void const * argument)
 void task_zxbus(void const * argument)
 {
   /* USER CODE BEGIN task_zxbus */
-  /* Infinite loop */
+  zxbus_init();
   for(;;)
   {
     osDelay(1);

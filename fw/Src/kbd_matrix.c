@@ -4,6 +4,7 @@
 #include "usbh_hid_keybd.h"
 #include "cmsis_os.h"
 #include <inttypes.h>
+#include "kbd_global.h"
 
 /*
 * GPIO map:

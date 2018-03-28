@@ -61,6 +61,7 @@
 
 #define ZIORQn_Pin GPIO_PIN_2
 #define ZIORQn_GPIO_Port GPIOE
+#define ZIORQn_EXTI_IRQn EXTI2_IRQn
 #define ZRDn_Pin GPIO_PIN_3
 #define ZRDn_GPIO_Port GPIOE
 #define ZWRn_Pin GPIO_PIN_4

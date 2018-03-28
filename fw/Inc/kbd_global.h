@@ -4,8 +4,13 @@
 #include "stm32f4xx_hal.h"
 #include "usbh_hid_keybd.h"
 
+#define KBD_MATRIX_ROW 12
+#define KBD_MATRIX_COL 12
+
 // data from USB keyboard
 extern HID_KEYBD_Info_TypeDef     keybd_info;
+// matrix of a keys
+extern uint16_t kbd_data[KBD_MATRIX_ROW];
 
 #define SW_MODE_RK86		0x01
 #define SW_MODE_MC7007	0x02
