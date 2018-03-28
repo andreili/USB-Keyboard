@@ -3,7 +3,7 @@
 //#include "hid_proc.h"
 #include "kbd_matrix.h"
 #include "lcd_driver.h"
-#include "usbh_hid_keybd.h"
+#include "kbd_global.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -30,14 +30,6 @@ int fputc(int ch, FILE* f)
 {
 	return 0;
 }
-
-extern int dev_mode;
-extern int boot_OK;
-extern int boot_mounted;
-extern int fw_size;
-extern uint32_t fw_crc;
-extern uint32_t fw_crc_base;
-extern HID_KEYBD_Info_TypeDef     keybd_info;
 
 extern size_t xFreeBytesRemaining;
 

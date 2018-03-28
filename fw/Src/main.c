@@ -58,6 +58,7 @@
 #include "gui_all.h"
 #include "kbd_matrix.h"
 #include "ps2.h"
+#include "kbd_global.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -104,6 +105,8 @@ void task_zxbus(void const * argument);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 void LCD_fill_mem(void);
+
+uint8_t usb_mode = SW_MODE_PS2;
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -179,7 +182,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of USB */
-  osThreadDef(USB, task_USB, osPriorityNormal, 0, 512);
+  osThreadDef(USB, task_USB, osPriorityNormal, 0, 256);
   USBHandle = osThreadCreate(osThread(USB), NULL);
 
   /* definition and creation of GUI */
@@ -187,16 +190,25 @@ int main(void)
   GUIHandle = osThreadCreate(osThread(GUI), NULL);
 
   /* definition and creation of Matrix */
-  osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 256);
-  MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
+	if ((usb_mode & SW_MODE_MATRIX) == SW_MODE_MATRIX)
+	{
+		osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 128);
+		MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
+	}
 
   /* definition and creation of PS2 */
-  osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
-  PS2Handle = osThreadCreate(osThread(PS2), NULL);
+	if ((usb_mode & SW_MODE_PS2) == SW_MODE_PS2)
+	{
+		osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
+		PS2Handle = osThreadCreate(osThread(PS2), NULL);
+	}
 
   /* definition and creation of zxbus */
-  osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
-  zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
+	if ((usb_mode & SW_MODE_ZXBUS) == SW_MODE_ZXBUS)
+	{
+		osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
+		zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
+	}
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -318,6 +330,7 @@ static void MX_TIM2_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig;
   TIM_OC_InitTypeDef sConfigOC;
+  TIM_MasterConfigTypeDef sMasterConfig;
 
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = PS2_CLK_PRESCALER - 1;
@@ -351,6 +364,13 @@ static void MX_TIM2_Init(void)
 
   sConfigOC.Pulse = (PS2_CLK_PERIOD / 2) - 1;
   if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -583,7 +603,7 @@ void task_USB(void const * argument)
   MX_USB_HOST_Init();
 
   /* init code for LWIP */
-  MX_LWIP_Init();
+  //MX_LWIP_Init();
 
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
@@ -664,7 +684,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-  if (htim->Instance == TIM4) {
+  else if (htim->Instance == TIM4) 
+	{
     LCD_fill_mem();
   }
 
