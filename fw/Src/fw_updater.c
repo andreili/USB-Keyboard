@@ -1,11 +1,15 @@
 #include "fw_updater.h"
 #include "cmsis_os.h"
-#include "hid_proc.h"
 #include "lcd_driver.h"
 
 extern uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE];
 extern uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE];
 extern uint16_t lcd_buff[MAX_X][BUF_MAX_Y];
+
+#define LED_3_ON()    	GPIOD->BSRR = GPIO_BSRR_BS3
+#define LED_3_OFF()    	GPIOD->BSRR = GPIO_BSRR_BR3
+#define LED_4_ON()    	GPIOD->BSRR = GPIO_BSRR_BS4
+#define LED_4_OFF()    	GPIOD->BSRR = GPIO_BSRR_BR4
 
 void update_fw(uint8_t *buf, uint32_t fw_size)
 {
