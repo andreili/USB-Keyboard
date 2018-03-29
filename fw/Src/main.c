@@ -598,7 +598,7 @@ static void MX_GPIO_Init(void)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (usb_mode == SW_MODE_ZXBUS)
-		zxbus_proc(GPIO_Pin);
+		zxbus_proc();
 }
 
 /* USER CODE END 4 */
