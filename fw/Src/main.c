@@ -197,21 +197,21 @@ int main(void)
 	#endif
 
   /* definition and creation of Matrix */
-	if ((usb_mode & SW_MODE_MATRIX) == SW_MODE_MATRIX)
+	if (usb_mode == SW_MODE_MATRIX)
 	{
 		osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 128);
 		MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
 	}
 
   /* definition and creation of PS2 */
-	if ((usb_mode & SW_MODE_PS2) == SW_MODE_PS2)
+	if (usb_mode == SW_MODE_PS2)
 	{
 		osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
 		PS2Handle = osThreadCreate(osThread(PS2), NULL);
 	}
 
   /* definition and creation of zxbus */
-	if ((usb_mode & SW_MODE_ZXBUS) == SW_MODE_ZXBUS)
+	if (usb_mode == SW_MODE_ZXBUS)
 	{
 		osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
 		zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
@@ -597,7 +597,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if ((usb_mode & SW_MODE_ZXBUS) == SW_MODE_ZXBUS)
+	if (usb_mode == SW_MODE_ZXBUS)
 		zxbus_proc(GPIO_Pin);
 }
 

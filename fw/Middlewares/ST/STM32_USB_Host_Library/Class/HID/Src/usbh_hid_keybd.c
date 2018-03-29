@@ -151,7 +151,7 @@ USBH_StatusTypeDef USBH_HID_KeybdDecode(uint8_t* pData, int length)
     for(x=0; x < sizeof(keybd_info.keys); x++)
 			keybd_info.keys[x] = pData[x + 2];
     
-		if ((usb_mode & SW_MODE_PS2) == SW_MODE_PS2)
+		if (usb_mode == SW_MODE_PS2)
 		{
 			// check for released keys
 			uint8_t rel_sys = keybd_info.alt_keys & (~keybd_info_prev.alt_keys);
@@ -169,7 +169,7 @@ USBH_StatusTypeDef USBH_HID_KeybdDecode(uint8_t* pData, int length)
 			}
 		}
     
-		if ((usb_mode & SW_MODE_PS2) == SW_MODE_PS2)
+		if (usb_mode == SW_MODE_PS2)
 		{
 			// check for pressed keys
 			uint8_t new_sys = (~keybd_info.alt_keys) & keybd_info_prev.alt_keys;
