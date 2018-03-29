@@ -4,6 +4,8 @@
 #include "stm32f4xx_hal.h"
 #include "usbh_hid_keybd.h"
 
+#define GUI_ENABLE
+
 #define KBD_MATRIX_ROW 12
 #define KBD_MATRIX_COL 12
 

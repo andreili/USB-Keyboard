@@ -335,7 +335,7 @@
               <MiscControls>-Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-undef -Wno-packed -Wno-sign-conversion -Wno-conversion -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-unused-parameter -Wno-unused-function -Wno-covered-switch-default -Wno-switch-enum</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;                          ../Drivers/STM32F4xx_HAL_Driver/Inc;                          ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                          ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F;                          ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc;                          ../Middlewares/ST/STM32_USB_Host_Library/Class/AUDIO/Inc;                          ../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc;                          ../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc;                          ../Middlewares/ST/STM32_USB_Host_Library/Class/MSC/Inc;                          ../Middlewares/ST/STM32_USB_Host_Library/Class/MTP/Inc;                          ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                          ../Middlewares/Third_Party/FatFs/src;                          ../Middlewares/Third_Party/FreeRTOS/Source/include;                          ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;                          ../Drivers/CMSIS/Include;                          ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;              ../Middlewares/Third_Party/LwIP/src/include;              ../Middlewares/Third_Party/LwIP/system;              ../Middlewares/Third_Party/LwIP/src/include/netif/ppp;              ../Middlewares/Third_Party/LwIP/src/include/lwip;              ../Middlewares/Third_Party/LwIP/src/include/lwip/apps;              ../Middlewares/Third_Party/LwIP/src/include/lwip/priv;              ../Middlewares/Third_Party/LwIP/src/include/lwip/prot;              ../Middlewares/Third_Party/LwIP/src/include/netif;              ../Middlewares/Third_Party/LwIP/src/include/posix;              ../Middlewares/Third_Party/LwIP/src/include/posix/sys;              ../Middlewares/Third_Party/LwIP/system/arch</IncludePath>
+              <IncludePath>../Inc;                             ../Drivers/STM32F4xx_HAL_Driver/Inc;                             ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;                             ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F;                             ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc;                             ../Middlewares/ST/STM32_USB_Host_Library/Class/AUDIO/Inc;                             ../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc;                             ../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc;                             ../Middlewares/ST/STM32_USB_Host_Library/Class/MSC/Inc;                             ../Middlewares/ST/STM32_USB_Host_Library/Class/MTP/Inc;                             ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;                             ../Middlewares/Third_Party/FatFs/src;                             ../Middlewares/Third_Party/FreeRTOS/Source/include;                             ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;                             ../Drivers/CMSIS/Include;                             ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;                 ../Middlewares/Third_Party/LwIP/src/include;                 ../Middlewares/Third_Party/LwIP/system;                 ../Middlewares/Third_Party/LwIP/src/include/netif/ppp;                 ../Middlewares/Third_Party/LwIP/src/include/lwip;                 ../Middlewares/Third_Party/LwIP/src/include/lwip/apps;                 ../Middlewares/Third_Party/LwIP/src/include/lwip/priv;                 ../Middlewares/Third_Party/LwIP/src/include/lwip/prot;                 ../Middlewares/Third_Party/LwIP/src/include/netif;                 ../Middlewares/Third_Party/LwIP/src/include/posix;                 ../Middlewares/Third_Party/LwIP/src/include/posix/sys;                 ../Middlewares/Third_Party/LwIP/system/arch</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -924,11 +924,6 @@
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_hal_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c</FilePath>
@@ -972,11 +967,6 @@
               <FileName>stm32f4xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_ll_fsmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f4xx_hal.c</FileName>
@@ -1051,6 +1041,16 @@
               <FileName>stm32f4xx_hal_eth.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sram.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_ll_fsmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c</FilePath>
             </File>
           </Files>
         </Group>
