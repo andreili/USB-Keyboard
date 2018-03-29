@@ -2,6 +2,7 @@
 #include "main.h"
 #include "ringbuffer.h"
 #include "usbh_hid_keybd.h"
+#include "kbd_global.h"
 
 typedef enum { IDLE, SEND, REQUEST, RECEIVE } PS2_StateTypeDef;
 typedef enum { START, DATA, PARITY, STOP, ACK, FINISHED } PS2_TransferStateTypeDef;
@@ -319,8 +320,11 @@ void PS2_init(void)
 	HAL_TIM_Base_Start_IT(&htim2);
 }
 
-void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
+void PS2_timer_cb(TIM_HandleTypeDef *htim)
 {
+	if (htim->Instance != TIM2)
+		return;
+	
 	if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
 		PS2_ClockIRQHandler();
 	else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
@@ -403,3 +407,11 @@ void PS2_add_event_sys(uint8_t is_released, uint8_t HID_scancode_sys)
 		}
 	}
 }
+
+const kbd_proc_t proc_ps2 =
+{
+	.init = PS2_init,
+	.proc = NULL,
+	.interrupt = NULL,
+	.periodic = PS2_timer_cb
+};

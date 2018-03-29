@@ -11,8 +11,6 @@
 #define SW_MODE_MC7007	0x02
 
 uint16_t proc_row(uint16_t col_data);
-void init_matrix(void);
 void fill_matrix(uint32_t mode);
-void proc_matrix(void);
 
 #endif

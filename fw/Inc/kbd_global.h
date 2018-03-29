@@ -9,6 +9,11 @@
 #define KBD_MATRIX_ROW 12
 #define KBD_MATRIX_COL 12
 
+/* 12kHZ = 168MHz/14/1000:     Prescaler = 14 Period = 1000 */
+/* 1 HZ  = 168MHz/168000/1000: Prescaler = 168000, Period = 1000 */
+#define PS2_CLK_PERIOD      1000
+#define PS2_CLK_PRESCALER   14
+
 // data from USB keyboard
 extern HID_KEYBD_Info_TypeDef     keybd_info;
 // matrix of a keys
@@ -28,5 +33,18 @@ extern uint16_t kbd_data[KBD_MATRIX_ROW];
 
 extern uint8_t usb_mode;
 extern uint8_t PS2_SendRequest;
+
+typedef struct
+{ 
+	void (*init)(void);
+	void (*proc)(void);
+	void (*interrupt)(void);
+	void (*periodic)(TIM_HandleTypeDef *htim);
+} kbd_proc_t;
+
+extern const kbd_proc_t proc_matrix;
+extern const kbd_proc_t proc_ps2;
+extern const kbd_proc_t proc_zxbus;
+extern const kbd_proc_t proc_dummy;
 
 #endif

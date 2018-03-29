@@ -95,7 +95,7 @@ void fill_matrix(uint32_t mode)
 	__enable_irq();
 }
 
-void proc_matrix(void)
+/*void proc_matrix(void)
 {
 	__disable_irq();
 	uint16_t row = ~PORT_INP->IDR;
@@ -109,4 +109,4 @@ void proc_matrix(void)
 		}
 	PORT_OUT->ODR = (PORT_OUT->ODR & 0x000f) | (~kbd_data[row]);
 	__enable_irq();
-}
+}*/

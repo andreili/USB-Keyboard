@@ -56,10 +56,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "gui_all.h"
-#include "kbd_matrix.h"
-#include "ps2.h"
 #include "kbd_global.h"
-#include "mod_zxbus.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -78,15 +75,30 @@ UART_HandleTypeDef huart6;
 
 osThreadId USBHandle;
 osThreadId GUIHandle;
-osThreadId MatrixHandle;
-osThreadId PS2Handle;
-osThreadId zxbusHandle;
+osThreadId KBDHandle;
 osMutexId mtx_hidHandle;
 osMutexId mtx_matrixHandle;
 osMutexId mtx_guiHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+
+const kbd_proc_t proc_dummy =
+{
+	.init = NULL,
+	.proc = NULL,
+	.interrupt = NULL,
+	.periodic = NULL
+};
+
+kbd_proc_t out_proc =
+{
+	.init = NULL,
+	.proc = NULL,
+	.interrupt = NULL,
+	.periodic = NULL
+};
+uint32_t matrix_mode = 0;
 
 /* USER CODE END PV */
 
@@ -102,9 +114,7 @@ static void MX_SPI1_Init(void);
 static void MX_I2C1_Init(void);
 void task_USB(void const * argument);
 void task_GUI(void const * argument);
-void task_matrix(void const * argument);
-void task_ps2(void const * argument);
-void task_zxbus(void const * argument);
+void task_kbd(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -191,31 +201,12 @@ int main(void)
   USBHandle = osThreadCreate(osThread(USB), NULL);
 
   /* definition and creation of GUI */
-	#ifdef GUI_ENABLE
   osThreadDef(GUI, task_GUI, osPriorityIdle, 0, 256);
   GUIHandle = osThreadCreate(osThread(GUI), NULL);
-	#endif
 
-  /* definition and creation of Matrix */
-	if (usb_mode == SW_MODE_MATRIX)
-	{
-		osThreadDef(Matrix, task_matrix, osPriorityIdle, 0, 128);
-		MatrixHandle = osThreadCreate(osThread(Matrix), NULL);
-	}
-
-  /* definition and creation of PS2 */
-	if (usb_mode == SW_MODE_PS2)
-	{
-		osThreadDef(PS2, task_ps2, osPriorityIdle, 0, 128);
-		PS2Handle = osThreadCreate(osThread(PS2), NULL);
-	}
-
-  /* definition and creation of zxbus */
-	if (usb_mode == SW_MODE_ZXBUS)
-	{
-		osThreadDef(zxbus, task_zxbus, osPriorityIdle, 0, 128);
-		zxbusHandle = osThreadCreate(osThread(zxbus), NULL);
-	}
+  /* definition and creation of KBD */
+  osThreadDef(KBD, task_kbd, osPriorityIdle, 0, 128);
+  KBDHandle = osThreadCreate(osThread(KBD), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -571,12 +562,12 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : A8_Pin A9_Pin A10_Pin A11_Pin 
                            A12_Pin A13_Pin A14_Pin A15_Pin 
-                           OUT0_Pin OUT1_Pin SD_CD_Pin OUT2_Pin 
-                           OUT3_Pin OUT4_Pin OUT5_Pin */
+                           LED1_Pin LED2_Pin SD_CD_Pin LED3_Pin 
+                           OUT0_Pin OUT1_Pin OUT2_Pin */
   GPIO_InitStruct.Pin = A8_Pin|A9_Pin|A10_Pin|A11_Pin 
                           |A12_Pin|A13_Pin|A14_Pin|A15_Pin 
-                          |OUT0_Pin|OUT1_Pin|SD_CD_Pin|OUT2_Pin 
-                          |OUT3_Pin|OUT4_Pin|OUT5_Pin;
+                          |LED1_Pin|LED2_Pin|SD_CD_Pin|LED3_Pin 
+                          |OUT0_Pin|OUT1_Pin|OUT2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -597,8 +588,14 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if (usb_mode == SW_MODE_ZXBUS)
-		zxbus_proc();
+	if (out_proc.interrupt != NULL)
+		out_proc.interrupt();
+}
+
+void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (out_proc.periodic != NULL)
+		out_proc.periodic(htim);
 }
 
 /* USER CODE END 4 */
@@ -639,43 +636,39 @@ void task_GUI(void const * argument)
   /* USER CODE END task_GUI */
 }
 
-/* task_matrix function */
-void task_matrix(void const * argument)
+/* task_kbd function */
+void task_kbd(void const * argument)
 {
-  /* USER CODE BEGIN task_matrix */
-	//init_matrix();
+  /* USER CODE BEGIN task_kbd */
+	
+	uint32_t out_mode = SW_MODE_PS2;
+	
+	switch (out_mode)
+	{
+	case SW_MODE_MATRIX:
+		out_proc = proc_matrix;
+		break;
+	case SW_MODE_PS2:
+		out_proc = proc_ps2;
+		break;
+	case SW_MODE_ZXBUS:
+		out_proc = proc_zxbus;
+		break;
+	default:
+		out_proc = proc_matrix;
+		break;
+	}
+	
+	if (out_proc.init != NULL)
+		out_proc.init();
+	
   for(;;)
   {
-		//proc_matrix();
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
+		if (out_proc.proc != NULL)
+			out_proc.proc();
     osDelay(1);
   }
-  /* USER CODE END task_matrix */
-}
-
-/* task_ps2 function */
-void task_ps2(void const * argument)
-{
-  /* USER CODE BEGIN task_ps2 */
-	osDelay(500);
-  PS2_init();
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END task_ps2 */
-}
-
-/* task_zxbus function */
-void task_zxbus(void const * argument)
-{
-  /* USER CODE BEGIN task_zxbus */
-  zxbus_init();
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END task_zxbus */
+  /* USER CODE END task_kbd */
 }
 
 /**
@@ -701,6 +694,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			LCD_fill_mem();
   }
 
+	if (out_proc.periodic != NULL)
+		out_proc.periodic(htim);
   /* USER CODE END Callback 1 */
 }
 
