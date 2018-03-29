@@ -129,12 +129,12 @@ $EndComp
 $Comp
 L R R14
 U 1 1 5AAFEBEA
-P 4500 1150
-F 0 "R14" V 4550 1350 50  0000 C CNN
-F 1 "22" V 4500 1150 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805" V 4430 1150 50  0001 C CNN
-F 3 "" H 4500 1150 50  0001 C CNN
-	1    4500 1150
+P 4225 1150
+F 0 "R14" V 4275 1350 50  0000 C CNN
+F 1 "22" V 4225 1150 50  0000 C CNN
+F 2 "Resistors_SMD:R_0805" V 4155 1150 50  0001 C CNN
+F 3 "" H 4225 1150 50  0001 C CNN
+	1    4225 1150
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -149,9 +149,9 @@ F 3 "" H 4225 1250 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Text GLabel 3925 1250 0    60   Input ~ 0
-FS_D-
+FS_N
 Text GLabel 3925 1150 0    60   Input ~ 0
-FS_D+
+FS_P
 $Comp
 L GND #PWR04
 U 1 1 5AAFEEC4
@@ -177,9 +177,9 @@ $EndComp
 Text GLabel 10750 4450 2    60   Input ~ 0
 FS_PWR
 Text GLabel 10750 4750 2    60   Input ~ 0
-FS_D-
+FS_N
 Text GLabel 10750 4850 2    60   Input ~ 0
-FS_D+
+FS_P
 $Comp
 L +3.3V #PWR06
 U 1 1 5AB0038B
@@ -236,13 +236,13 @@ SWCLK
 Text GLabel 10750 4550 2    60   Input ~ 0
 HS_PWR
 Text GLabel 10750 7950 2    60   Input ~ 0
-D1
+SD1
 Text GLabel 10750 8050 2    60   Input ~ 0
-D2
+SD2
 Text GLabel 10750 7850 2    60   Input ~ 0
-D0
+SD0
 Text GLabel 10750 8150 2    60   Input ~ 0
-D3
+SD3
 Text GLabel 10750 8250 2    60   Input ~ 0
 CK
 Text GLabel 1750 7250 0    60   Input ~ 0
@@ -420,15 +420,15 @@ F 3 "" H 12050 1600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text GLabel 8400 1600 0    60   Input ~ 0
-D2
+SD2
 Text GLabel 8400 1700 0    60   Input ~ 0
-D3
+SD3
 Text GLabel 8400 1800 0    60   Input ~ 0
 CMD
 Text GLabel 8400 2200 0    60   Input ~ 0
-D0
+SD0
 Text GLabel 8400 2300 0    60   Input ~ 0
-D1
+SD1
 Text GLabel 8400 2000 0    60   Input ~ 0
 CK
 $Comp
@@ -1003,7 +1003,7 @@ $Comp
 L R R16
 U 1 1 5AB23AFB
 P 4225 1600
-F 0 "R16" V 4275 1425 50  0000 C CNN
+F 0 "R16" V 4275 1800 50  0000 C CNN
 F 1 "22" V 4225 1600 50  0000 C CNN
 F 2 "Resistors_SMD:R_0805" V 4155 1600 50  0001 C CNN
 F 3 "" H 4225 1600 50  0001 C CNN
@@ -1022,9 +1022,9 @@ F 3 "" H 4225 1700 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Text GLabel 3925 1700 0    60   Input ~ 0
-HS_D-
+HS_N
 Text GLabel 3925 1600 0    60   Input ~ 0
-HS_D+
+HS_P
 $Comp
 L +3.3V #PWR024
 U 1 1 5AB23B1E
@@ -1037,9 +1037,9 @@ F 3 "" H 1750 1950 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 Text GLabel 10750 6750 2    60   Input ~ 0
-HS_D-
+HS_N
 Text GLabel 10750 6850 2    60   Input ~ 0
-HS_D+
+HS_P
 Text GLabel 10750 5150 2    60   Input ~ 0
 SPI_CS
 $Comp
@@ -1892,8 +1892,6 @@ Wire Wire Line
 	1675 1600 2100 1600
 Wire Wire Line
 	4075 1250 3925 1250
-Wire Wire Line
-	3925 1150 4350 1150
 Connection ~ 1700 9850
 Wire Wire Line
 	1700 9950 1700 9850
@@ -2745,4 +2743,16 @@ F 3 "" H 15250 4700 50  0001 C CNN
 	1    15250 4700
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	4375 1150 4650 1150
+Wire Wire Line
+	3925 1150 4075 1150
+Text Label 4400 1150 0    60   ~ 0
+F_P
+Text Label 4400 1250 0    60   ~ 0
+F_N
+Text Label 4400 1600 0    60   ~ 0
+H_P
+Text Label 4400 1700 0    60   ~ 0
+H_N
 $EndSCHEMATC
