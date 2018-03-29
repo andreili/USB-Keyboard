@@ -59,16 +59,6 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define D2_Pin GPIO_PIN_2
-#define D2_GPIO_Port GPIOE
-#define D3_Pin GPIO_PIN_3
-#define D3_GPIO_Port GPIOE
-#define D4_Pin GPIO_PIN_4
-#define D4_GPIO_Port GPIOE
-#define D5_Pin GPIO_PIN_5
-#define D5_GPIO_Port GPIOE
-#define D6_Pin GPIO_PIN_6
-#define D6_GPIO_Port GPIOE
 #define MTX5_Pin GPIO_PIN_13
 #define MTX5_GPIO_Port GPIOC
 #define MTX6_Pin GPIO_PIN_14
@@ -98,24 +88,6 @@
 #define WRn_Pin GPIO_PIN_2
 #define WRn_GPIO_Port GPIOB
 #define WRn_EXTI_IRQn EXTI2_IRQn
-#define D7_Pin GPIO_PIN_7
-#define D7_GPIO_Port GPIOE
-#define A0_Pin GPIO_PIN_8
-#define A0_GPIO_Port GPIOE
-#define A1_Pin GPIO_PIN_9
-#define A1_GPIO_Port GPIOE
-#define A2_Pin GPIO_PIN_10
-#define A2_GPIO_Port GPIOE
-#define A3_Pin GPIO_PIN_11
-#define A3_GPIO_Port GPIOE
-#define A4_Pin GPIO_PIN_12
-#define A4_GPIO_Port GPIOE
-#define A5_Pin GPIO_PIN_13
-#define A5_GPIO_Port GPIOE
-#define A6_Pin GPIO_PIN_14
-#define A6_GPIO_Port GPIOE
-#define A7_Pin GPIO_PIN_15
-#define A7_GPIO_Port GPIOE
 #define NMIn_Pin GPIO_PIN_10
 #define NMIn_GPIO_Port GPIOB
 #define A8_Pin GPIO_PIN_8
@@ -158,10 +130,6 @@
 #define MREQn_GPIO_Port GPIOB
 #define INTn_Pin GPIO_PIN_9
 #define INTn_GPIO_Port GPIOB
-#define D0_Pin GPIO_PIN_0
-#define D0_GPIO_Port GPIOE
-#define D1_Pin GPIO_PIN_1
-#define D1_GPIO_Port GPIOE
 
 /* ########################## Assert Selection ############################## */
 /**
