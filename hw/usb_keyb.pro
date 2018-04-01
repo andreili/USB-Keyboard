@@ -1,4 +1,4 @@
-update=22.03.2018 21:11:13
+update=01.04.2018 19:01:11
 version=1
 last_client=kicad
 [pcbnew]
@@ -65,3 +65,4 @@ LibName33=contrib
 LibName34=valves
 LibName35=C:/Program Files/KiCad/share/kicad/library/stm32
 LibName36=D:/Projects/Kicad/stm_var
+LibName37=D:/Projects/FPGA/orion/mem
