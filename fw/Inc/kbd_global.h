@@ -4,7 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "usbh_hid_keybd.h"
 
-#define GUI_ENABLE
+//#define GUI_ENABLE
 
 #define KBD_MATRIX_ROW 12
 #define KBD_MATRIX_COL 12
@@ -32,6 +32,7 @@ extern uint16_t kbd_data[KBD_MATRIX_ROW];
 #define SW_MODE_RES5		0x07
 
 extern uint8_t usb_mode;
+extern uint8_t matrix_mode;
 extern uint8_t PS2_SendRequest;
 
 typedef struct

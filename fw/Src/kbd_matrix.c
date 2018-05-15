@@ -14,6 +14,8 @@
 *
 */
 
+uint8_t matrix_mode;
+
 uint16_t kbd_data[KBD_MATRIX_ROW];
 
 uint16_t proc_row(uint16_t col_data)

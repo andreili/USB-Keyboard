@@ -2,6 +2,9 @@
 #include "cmsis_os.h"
 #include "kbd_matrix.h"
 #include "AsciiLib.h"
+#include "kbd_global.h"
+
+#ifdef GUI_ENABLE
 
 // ILI9325
 
@@ -578,3 +581,5 @@ void GUI_Text(uint16_t Xpos, uint16_t Ypos, char *str,uint16_t Color, uint16_t b
     }
     while ( *str != 0 );
 }
+
+#endif //GUI_ENABLE

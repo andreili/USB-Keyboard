@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef GUI_ENABLE
+
 void init_GUI(void)
 {
 	LCD_Initialization();
@@ -108,3 +110,5 @@ void main_GUI(void)
     osDelay(100);
 	}
 }
+
+#endif //GUI_ENABLE
