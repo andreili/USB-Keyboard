@@ -641,6 +641,8 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 void task_USB(void const * argument)
 {
 	osDelay(500);
+	int mounted = 0;
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   /* init code for FATFS */
   MX_FATFS_Init();
 
@@ -654,11 +656,20 @@ void task_USB(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+		if (mounted == 0)
+		{
+			if (f_mount(&SDFatFS, (TCHAR const*)SDPath, 1) == FR_OK)
+			{
+				mounted = 1;
+				HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+			}
+		}
+		
 		USBH_Process(&hUsbHostHS);
 		USBH_Process(&hUsbHostFS);
 		//fill_matrix(0);
 		
-		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, HAL_GPIO_ReadPin(MTX5_GPIO_Port, MTX5_Pin));
+		//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, HAL_GPIO_ReadPin(MTX5_GPIO_Port, MTX5_Pin));
 		HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, HAL_GPIO_ReadPin(MTX6_GPIO_Port, MTX6_Pin));
 		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, HAL_GPIO_ReadPin(MTX7_GPIO_Port, MTX7_Pin));
 		
