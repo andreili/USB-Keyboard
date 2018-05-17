@@ -541,10 +541,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MTX5_Pin MTX6_Pin MTX7_Pin MTX2_Pin 
-                           MTX3_Pin MTX4_Pin */
-  GPIO_InitStruct.Pin = MTX5_Pin|MTX6_Pin|MTX7_Pin|MTX2_Pin 
-                          |MTX3_Pin|MTX4_Pin;
+  /*Configure GPIO pins : MTX2_Pin MTX1_Pin MTX0_Pin MTX5_Pin 
+                           MTX4_Pin MTX3_Pin */
+  GPIO_InitStruct.Pin = MTX2_Pin|MTX1_Pin|MTX0_Pin|MTX5_Pin 
+                          |MTX4_Pin|MTX3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -555,8 +555,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MTX0_Pin MTX1_Pin */
-  GPIO_InitStruct.Pin = MTX0_Pin|MTX1_Pin;
+  /*Configure GPIO pins : MTX7_Pin MTX6_Pin */
+  GPIO_InitStruct.Pin = MTX7_Pin|MTX6_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -654,7 +654,7 @@ void task_USB(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	//	USBH_Process(&hUsbHostHS);
+		USBH_Process(&hUsbHostHS);
 		USBH_Process(&hUsbHostFS);
 		//fill_matrix(0);
 		
