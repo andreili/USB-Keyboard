@@ -2,7 +2,6 @@
 #include "stm32f4xx_hal.h"
 #include "kbd_matrix_data.h"
 #include "usbh_hid_keybd.h"
-#include "cmsis_os.h"
 #include <inttypes.h>
 #include "kbd_global.h"
 
@@ -23,7 +22,7 @@ uint16_t proc_row(uint16_t col_data)
 	return 0;
 }
 
-void init_matrix(void)
+void matrix_init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
 	
@@ -55,7 +54,7 @@ void init_matrix(void)
 	
 extern HID_KEYBD_Info_TypeDef     keybd_info;
 
-void fill_matrix(uint32_t mode)
+void matrix_fill(TIM_HandleTypeDef *htim)
 {
 	__disable_irq();
 	
@@ -97,7 +96,7 @@ void fill_matrix(uint32_t mode)
 	__enable_irq();
 }
 
-/*void proc_matrix(void)
+void matrix_proc(void)
 {
 	__disable_irq();
 	uint16_t row = ~PORT_INP->IDR;
@@ -111,4 +110,13 @@ void fill_matrix(uint32_t mode)
 		}
 	PORT_OUT->ODR = (PORT_OUT->ODR & 0x000f) | (~kbd_data[row]);
 	__enable_irq();
-}*/
+}
+
+
+const kbd_proc_t proc_matrix =
+{
+	.init = matrix_init,
+	.proc = matrix_proc,
+	.interrupt = NULL,
+	.periodic = matrix_fill
+};

@@ -69,7 +69,7 @@
 /* USER CODE END PFP */
 
 /* USB Host core handle declaration */
-USBH_HandleTypeDef hUsbHostHS;
+//USBH_HandleTypeDef hUsbHostHS;
 USBH_HandleTypeDef hUsbHostFS;
 ApplicationTypeDef Appli_state = APPLICATION_IDLE;
 
@@ -83,7 +83,7 @@ ApplicationTypeDef Appli_state = APPLICATION_IDLE;
 /*
  * user callback declaration
  */
-static void USBH_UserProcess1(USBH_HandleTypeDef *phost, uint8_t id);
+//static void USBH_UserProcess1(USBH_HandleTypeDef *phost, uint8_t id);
 static void USBH_UserProcess2(USBH_HandleTypeDef *phost, uint8_t id);
 
 /*
@@ -104,19 +104,19 @@ void MX_USB_HOST_Init(void)
   /* USER CODE END USB_HOST_Init_PreTreatment */
   
   /* Init host Library, add supported class and start the library. */
-  USBH_Init(&hUsbHostHS, USBH_UserProcess1, HOST_HS);
+  //USBH_Init(&hUsbHostHS, USBH_UserProcess1, HOST_HS);
 
   //USBH_RegisterClass(&hUsbHostHS, USBH_AUDIO_CLASS);
 
   //USBH_RegisterClass(&hUsbHostHS, USBH_CDC_CLASS);
 
-  USBH_RegisterClass(&hUsbHostHS, USBH_MSC_CLASS);
+  //USBH_RegisterClass(&hUsbHostHS, USBH_MSC_CLASS);
 
-  USBH_RegisterClass(&hUsbHostHS, USBH_HID_CLASS);
+  //USBH_RegisterClass(&hUsbHostHS, USBH_HID_CLASS);
 
   //USBH_RegisterClass(&hUsbHostHS, USBH_MTP_CLASS);
 
-  USBH_Start(&hUsbHostHS);
+  //USBH_Start(&hUsbHostHS);
 
   /* USER CODE BEGIN USB_HOST_Init_PreTreatment */
   
@@ -143,34 +143,12 @@ void MX_USB_HOST_Init(void)
 }
 
 /*
- * user callback definition
+ * Background task
  */
-static void USBH_UserProcess1  (USBH_HandleTypeDef *phost, uint8_t id)
+void MX_USB_HOST_Process(void)
 {
-  /* USER CODE BEGIN CALL_BACK_2 */
-  switch(id)
-  {
-  case HOST_USER_SELECT_CONFIGURATION:
-  break;
-
-  case HOST_USER_DISCONNECTION:
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
-  Appli_state = APPLICATION_DISCONNECT;
-  break;
-
-  case HOST_USER_CLASS_ACTIVE:
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
-  Appli_state = APPLICATION_READY;
-  break;
-
-  case HOST_USER_CONNECTION:
-  Appli_state = APPLICATION_START;
-  break;
-
-  default:
-  break;
-  }
-  /* USER CODE END CALL_BACK_2 */
+  /* USB Host Background task */
+  USBH_Process(&hUsbHostFS);
 }
 
 static void USBH_UserProcess2  (USBH_HandleTypeDef *phost, uint8_t id)

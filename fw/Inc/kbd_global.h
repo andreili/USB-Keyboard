@@ -22,14 +22,14 @@ extern uint16_t kbd_data[KBD_MATRIX_ROW];
 #define SW_MODE_RK86		0x01
 #define SW_MODE_MC7007	0x02
 
-#define SW_MODE_MATRIX	0x00
-#define SW_MODE_PS2			0x01
-#define SW_MODE_ZXBUS		0x02
-#define SW_MODE_RES1		0x03
-#define SW_MODE_RES2		0x04
-#define SW_MODE_RES3		0x05
-#define SW_MODE_RES4		0x06
-#define SW_MODE_RES5		0x07
+#define SW_MODE_NONE		0x00
+#define SW_MODE_MATRIX	0x01
+#define SW_MODE_PS2			0x02
+#define SW_MODE_ZXBUS		0x03
+#define SW_MODE_RES1		0x04
+#define SW_MODE_RES2		0x05
+#define SW_MODE_RES3		0x06
+#define SW_MODE_RES4		0x07
 
 extern uint8_t usb_mode;
 extern uint8_t matrix_mode;

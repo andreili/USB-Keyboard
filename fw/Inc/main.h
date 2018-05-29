@@ -69,22 +69,22 @@
 #define ZA5_GPIO_Port GPIOE
 #define ZA6_Pin GPIO_PIN_6
 #define ZA6_GPIO_Port GPIOE
-#define MTX2_Pin GPIO_PIN_13
-#define MTX2_GPIO_Port GPIOC
-#define MTX1_Pin GPIO_PIN_14
-#define MTX1_GPIO_Port GPIOC
-#define MTX0_Pin GPIO_PIN_15
-#define MTX0_GPIO_Port GPIOC
-#define MTX5_Pin GPIO_PIN_0
+#define MTX5_Pin GPIO_PIN_13
 #define MTX5_GPIO_Port GPIOC
-#define MTX4_Pin GPIO_PIN_2
-#define MTX4_GPIO_Port GPIOC
-#define MTX3_Pin GPIO_PIN_3
+#define MTX6_Pin GPIO_PIN_14
+#define MTX6_GPIO_Port GPIOC
+#define MTX7_Pin GPIO_PIN_15
+#define MTX7_GPIO_Port GPIOC
+#define MTX2_Pin GPIO_PIN_0
+#define MTX2_GPIO_Port GPIOC
+#define MTX3_Pin GPIO_PIN_2
 #define MTX3_GPIO_Port GPIOC
-#define MTX7_Pin GPIO_PIN_3
-#define MTX7_GPIO_Port GPIOA
-#define MTX6_Pin GPIO_PIN_4
-#define MTX6_GPIO_Port GPIOA
+#define MTX4_Pin GPIO_PIN_3
+#define MTX4_GPIO_Port GPIOC
+#define MTX0_Pin GPIO_PIN_3
+#define MTX0_GPIO_Port GPIOA
+#define MTX1_Pin GPIO_PIN_4
+#define MTX1_GPIO_Port GPIOA
 #define PS2_CLK_Pin GPIO_PIN_5
 #define PS2_CLK_GPIO_Port GPIOA
 #define PS2_DAT_Pin GPIO_PIN_6
@@ -155,8 +155,10 @@
 #define USB_PWR_GPIO_Port GPIOB
 #define ZA0_Pin GPIO_PIN_0
 #define ZA0_GPIO_Port GPIOE
+#define ZA0_EXTI_IRQn EXTI0_IRQn
 #define ZA1_Pin GPIO_PIN_1
 #define ZA1_GPIO_Port GPIOE
+#define ZA1_EXTI_IRQn EXTI1_IRQn
 
 /* ########################## Assert Selection ############################## */
 /**

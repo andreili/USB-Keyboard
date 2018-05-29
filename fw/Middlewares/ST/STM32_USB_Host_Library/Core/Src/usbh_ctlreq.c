@@ -206,7 +206,7 @@ USBH_StatusTypeDef USBH_GetDescriptor(USBH_HandleTypeDef *phost,
                                uint16_t value_idx, 
                                uint8_t* buff, 
                                uint16_t length )
-{
+{ 
   if(phost->RequestState == CMD_SEND)
   {
     phost->Control.setup.b.bmRequestType = USB_D2H | req_type;
@@ -596,6 +596,7 @@ static USBH_StatusTypeDef USBH_HandleControl (USBH_HandleTypeDef *phost)
     break; 
     
   case CTRL_SETUP_WAIT:
+    
     URB_Status = USBH_LL_GetURBState(phost, phost->Control.pipe_out); 
     /* case SETUP packet sent successfully */
     if(URB_Status == USBH_URB_DONE)

@@ -49,9 +49,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
-#include "cmsis_os.h"
 #include "fatfs.h"
-#include "lwip.h"
 #include "usb_host.h"
 
 /* USER CODE BEGIN Includes */
@@ -60,6 +58,8 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+ETH_HandleTypeDef heth;
+
 I2C_HandleTypeDef hi2c1;
 
 IWDG_HandleTypeDef hiwdg;
@@ -72,13 +72,6 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart6;
-
-osThreadId USBHandle;
-osThreadId GUIHandle;
-osThreadId KBDHandle;
-osMutexId mtx_hidHandle;
-osMutexId mtx_matrixHandle;
-osMutexId mtx_guiHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -111,9 +104,8 @@ static void MX_USART6_UART_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_I2C1_Init(void);
-void task_USB(void const * argument);
-void task_GUI(void const * argument);
-void task_kbd(void const * argument);
+static void MX_ETH_Init(void);
+void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -129,7 +121,7 @@ extern USBH_HandleTypeDef hUsbHostFS;
 
 void read_config(void)
 {
-	usb_mode = OUT0_GPIO_Port->IDR & 0x02;
+	usb_mode = OUT0_GPIO_Port->IDR & 0x07;
 	matrix_mode = 0;
 	matrix_mode |= HAL_GPIO_ReadPin(MTX0_GPIO_Port, MTX0_Pin) << 0;
 	matrix_mode |= HAL_GPIO_ReadPin(MTX1_GPIO_Port, MTX1_Pin) << 1;
@@ -174,79 +166,60 @@ int main(void)
   MX_GPIO_Init();
   //MX_IWDG_Init();
   MX_SDIO_SD_Init();
+  MX_FATFS_Init();
+  MX_USB_HOST_Init();
   MX_TIM4_Init();
   MX_USART6_UART_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
   MX_I2C1_Init();
+  //MX_ETH_Init();
   /* USER CODE BEGIN 2 */
 	read_config();
+	uint8_t mounted = 0;
+		
+	switch (usb_mode)
+	{
+	case SW_MODE_PS2: 
+		out_proc = proc_ps2;
+		break;
+	case SW_MODE_ZXBUS:
+		out_proc = proc_zxbus;
+		break;
+	case SW_MODE_MATRIX:
+	default:
+		out_proc = proc_matrix;
+		break;
+	}
+	if (out_proc.init != NULL)
+		out_proc.init();
   /* USER CODE END 2 */
-
-  /* Create the mutex(es) */
-  /* definition and creation of mtx_hid */
-  osMutexDef(mtx_hid);
-  mtx_hidHandle = osMutexCreate(osMutex(mtx_hid));
-
-  /* definition and creation of mtx_matrix */
-  osMutexDef(mtx_matrix);
-  mtx_matrixHandle = osMutexCreate(osMutex(mtx_matrix));
-
-  /* definition and creation of mtx_gui */
-	#ifdef GUI_ENABLE
-  osMutexDef(mtx_gui);
-  mtx_guiHandle = osMutexCreate(osMutex(mtx_gui));
-	#endif
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* Create the thread(s) */
-  /* definition and creation of USB */
-  osThreadDef(USB, task_USB, osPriorityNormal, 0, 256);
-  USBHandle = osThreadCreate(osThread(USB), NULL);
-
-  /* definition and creation of GUI */
-	#ifdef GUI_ENABLE
-  osThreadDef(GUI, task_GUI, osPriorityIdle, 0, 256);
-  GUIHandle = osThreadCreate(osThread(GUI), NULL);
-	#endif
-
-  /* definition and creation of KBD */
-  osThreadDef(KBD, task_kbd, osPriorityIdle, 0, 128);
-  KBDHandle = osThreadCreate(osThread(KBD), NULL);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
- 
-
-  /* Start scheduler */
-  osKernelStart();
-  
-  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
   while (1)
   {
 
   /* USER CODE END WHILE */
+    MX_USB_HOST_Process();
 
   /* USER CODE BEGIN 3 */
+		if (mounted == 0)
+		{
+			if (f_mount(&SDFatFS, SDPath, 1) == FR_OK)
+			{
+				mounted = 1;
+				HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+			}
+		}
+		
+		if (out_proc.proc != NULL)
+			out_proc.proc();
+		
+		HAL_Delay(1);
 
   }
   /* USER CODE END 3 */
@@ -299,6 +272,10 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+    /**Enables the Clock Security System 
+    */
+  HAL_RCC_EnableCSS();
+
     /**Configure the Systick interrupt time 
     */
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
@@ -308,7 +285,38 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+/* ETH init function */
+static void MX_ETH_Init(void)
+{
+
+   uint8_t MACAddr[6] ;
+
+  heth.Instance = ETH;
+  heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
+  heth.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
+  MACAddr[0] = 0x00;
+  MACAddr[1] = 0x80;
+  MACAddr[2] = 0xE1;
+  MACAddr[3] = 0x00;
+  MACAddr[4] = 0x00;
+  MACAddr[5] = 0x00;
+  heth.Init.MACAddr = &MACAddr[0];
+  heth.Init.RxMode = ETH_RXPOLLING_MODE;
+  heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
+  heth.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;
+
+  /* USER CODE BEGIN MACADDRESS */
+    
+  /* USER CODE END MACADDRESS */
+
+  if (HAL_ETH_Init(&heth) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
 }
 
 /* I2C1 init function */
@@ -513,7 +521,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, ZA2_Pin|ZA3_Pin|ZA4_Pin|ZA5_Pin 
                           |ZA6_Pin|ZA7_Pin|ZA8_Pin|ZA9_Pin 
                           |ZA10_Pin|ZA11_Pin|ZA12_Pin|ZA13_Pin 
-                          |ZA14_Pin|ZA15_Pin|ZA0_Pin|ZA1_Pin, GPIO_PIN_RESET);
+                          |ZA14_Pin|ZA15_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, PS2_CLK_Pin|PS2_DAT_Pin|LED1_Pin|LED2_Pin 
@@ -526,25 +534,25 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, ZD0_Pin|ZD1_Pin|ZD2_Pin|ZD3_Pin 
                           |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin 
                           |ZINT_Pin|ZNMI_Pin|ZIORQ_Pin|ZRD_Pin 
-                          |ZWR_Pin|ZMREQ_Pin, GPIO_PIN_RESET);
+                          |ZWR_Pin|ZMREQ_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : ZA2_Pin ZA3_Pin ZA4_Pin ZA5_Pin 
                            ZA6_Pin ZA7_Pin ZA8_Pin ZA9_Pin 
                            ZA10_Pin ZA11_Pin ZA12_Pin ZA13_Pin 
-                           ZA14_Pin ZA15_Pin ZA0_Pin ZA1_Pin */
+                           ZA14_Pin ZA15_Pin */
   GPIO_InitStruct.Pin = ZA2_Pin|ZA3_Pin|ZA4_Pin|ZA5_Pin 
                           |ZA6_Pin|ZA7_Pin|ZA8_Pin|ZA9_Pin 
                           |ZA10_Pin|ZA11_Pin|ZA12_Pin|ZA13_Pin 
-                          |ZA14_Pin|ZA15_Pin|ZA0_Pin|ZA1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+                          |ZA14_Pin|ZA15_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MTX2_Pin MTX1_Pin MTX0_Pin MTX5_Pin 
-                           MTX4_Pin MTX3_Pin */
-  GPIO_InitStruct.Pin = MTX2_Pin|MTX1_Pin|MTX0_Pin|MTX5_Pin 
-                          |MTX4_Pin|MTX3_Pin;
+  /*Configure GPIO pins : MTX5_Pin MTX6_Pin MTX7_Pin MTX2_Pin 
+                           MTX3_Pin MTX4_Pin */
+  GPIO_InitStruct.Pin = MTX5_Pin|MTX6_Pin|MTX7_Pin|MTX2_Pin 
+                          |MTX3_Pin|MTX4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -555,8 +563,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MTX7_Pin MTX6_Pin */
-  GPIO_InitStruct.Pin = MTX7_Pin|MTX6_Pin;
+  /*Configure GPIO pins : MTX0_Pin MTX1_Pin */
+  GPIO_InitStruct.Pin = MTX0_Pin|MTX1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -589,7 +597,7 @@ static void MX_GPIO_Init(void)
                           |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin 
                           |ZINT_Pin|ZNMI_Pin|ZIORQ_Pin|ZRD_Pin 
                           |ZWR_Pin|ZMREQ_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -620,13 +628,33 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : ZA0_Pin ZA1_Pin */
+  GPIO_InitStruct.Pin = ZA0_Pin|ZA1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+	__disable_irq();
+	GPIOE->BSRR = GPIO_BSRR_BS2;
+	HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
 	if (out_proc.interrupt != NULL)
 		out_proc.interrupt();
+	volatile int i = 0;
+	for ( ; i<10000000 ; ++i) {}
+	GPIOE->BSRR = GPIO_BSRR_BR2;
+	__enable_irq();
 }
 
 void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
@@ -636,95 +664,6 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /* USER CODE END 4 */
-
-/* task_USB function */
-void task_USB(void const * argument)
-{
-	osDelay(500);
-	int mounted = 0;
-	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-  /* init code for FATFS */
-  MX_FATFS_Init();
-
-  /* init code for USB_HOST */
-  MX_USB_HOST_Init();
-
-  /* init code for LWIP */
-  //MX_LWIP_Init();
-
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-		if (mounted == 0)
-		{
-			if (f_mount(&SDFatFS, (TCHAR const*)SDPath, 1) == FR_OK)
-			{
-				mounted = 1;
-				HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-			}
-		}
-		
-		USBH_Process(&hUsbHostHS);
-		USBH_Process(&hUsbHostFS);
-		//fill_matrix(0);
-		
-		//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, HAL_GPIO_ReadPin(MTX5_GPIO_Port, MTX5_Pin));
-		HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, HAL_GPIO_ReadPin(MTX6_GPIO_Port, MTX6_Pin));
-		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, HAL_GPIO_ReadPin(MTX7_GPIO_Port, MTX7_Pin));
-		
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
-    osDelay(1);
-  }
-  /* USER CODE END 5 */ 
-}
-
-#ifdef GUI_ENABLE
-/* task_GUI function */
-void task_GUI(void const * argument)
-{
-  /* USER CODE BEGIN task_GUI */
-	init_GUI();
-	main_GUI();
-	while (1);
-  /* USER CODE END task_GUI */
-}
-#endif
-
-/* task_kbd function */
-void task_kbd(void const * argument)
-{
-  /* USER CODE BEGIN task_kbd */
-	
-	uint32_t out_mode = SW_MODE_PS2;
-	
-	switch (out_mode)
-	{
-	case SW_MODE_MATRIX:
-		out_proc = proc_matrix;
-		break;
-	case SW_MODE_PS2:
-		out_proc = proc_ps2;
-		break;
-	case SW_MODE_ZXBUS:
-		out_proc = proc_zxbus;
-		break;
-	default:
-		out_proc = proc_matrix;
-		break;
-	}
-	
-	if (out_proc.init != NULL)
-		out_proc.init();
-	
-  for(;;)
-  {
-		if (out_proc.proc != NULL)
-			out_proc.proc();
-    osDelay(1);
-  }
-  /* USER CODE END task_kbd */
-}
 
 /**
   * @brief  Period elapsed callback in non blocking mode
@@ -768,6 +707,7 @@ void _Error_Handler(char *file, int line)
   /* User can add his own implementation to report the HAL error return state */
   while(1)
   {
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
   }
   /* USER CODE END Error_Handler_Debug */
 }
