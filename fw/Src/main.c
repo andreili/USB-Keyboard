@@ -49,6 +49,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "cmsis_os.h"
 #include "fatfs.h"
 #include "usb_host.h"
 
@@ -65,6 +66,7 @@ I2C_HandleTypeDef hi2c1;
 IWDG_HandleTypeDef hiwdg;
 
 SD_HandleTypeDef hsd;
+DMA_HandleTypeDef hdma_sdio;
 
 SPI_HandleTypeDef hspi1;
 
@@ -72,6 +74,8 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart6;
+
+osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -97,6 +101,7 @@ kbd_proc_t out_proc =
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_TIM4_Init(void);
@@ -105,7 +110,8 @@ static void MX_TIM2_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_ETH_Init(void);
-void MX_USB_HOST_Process(void);
+void StartDefaultTask(void const * argument);
+static void MX_NVIC_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -164,62 +170,88 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   //MX_IWDG_Init();
   MX_SDIO_SD_Init();
-  MX_FATFS_Init();
-  MX_USB_HOST_Init();
   MX_TIM4_Init();
   MX_USART6_UART_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
   MX_I2C1_Init();
   //MX_ETH_Init();
+
+  /* Initialize interrupts */
+  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+	DEBUG_PR("\n\rUSB keboard module\n\r");
+	
 	read_config();
 	uint8_t mounted = 0;
 		
+	DEBUG_PR("Matrix: #%i\n\r", matrix_mode);
 	switch (usb_mode)
 	{
 	case SW_MODE_PS2: 
+		DEBUG_PR("Mode: PS/2\n\r");
 		out_proc = proc_ps2;
 		break;
 	case SW_MODE_ZXBUS:
+		DEBUG_PR("Mode: ZX-BUS\n\r");
 		out_proc = proc_zxbus;
 		break;
 	case SW_MODE_MATRIX:
 	default:
+		DEBUG_PR("Mode: matrix\n\r");
 		out_proc = proc_matrix;
 		break;
 	}
 	if (out_proc.init != NULL)
 		out_proc.init();
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+	
 	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
+  /* USER CODE END 2 */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 1024);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+ 
+
+  /* Start scheduler */
+  osKernelStart();
+  
+  /* We should never get here as control is now taken by the scheduler */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
   while (1)
   {
 
   /* USER CODE END WHILE */
-    MX_USB_HOST_Process();
 
   /* USER CODE BEGIN 3 */
-		if (mounted == 0)
-		{
-			if (f_mount(&SDFatFS, SDPath, 1) == FR_OK)
-			{
-				mounted = 1;
-				HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-			}
-		}
-		
-		if (out_proc.proc != NULL)
-			out_proc.proc();
-		
-		HAL_Delay(1);
 
   }
   /* USER CODE END 3 */
@@ -285,7 +317,27 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+}
+
+/**
+  * @brief NVIC Configuration.
+  * @retval None
+  */
+static void MX_NVIC_Init(void)
+{
+  /* EXTI0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+  /* EXTI1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+  /* TIM2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(TIM2_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
+  /* SDIO_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(SDIO_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(SDIO_IRQn);
 }
 
 /* ETH init function */
@@ -495,6 +547,21 @@ static void MX_USART6_UART_Init(void)
 
 }
 
+/** 
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -521,7 +588,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, ZA2_Pin|ZA3_Pin|ZA4_Pin|ZA5_Pin 
                           |ZA6_Pin|ZA7_Pin|ZA8_Pin|ZA9_Pin 
                           |ZA10_Pin|ZA11_Pin|ZA12_Pin|ZA13_Pin 
-                          |ZA14_Pin|ZA15_Pin, GPIO_PIN_SET);
+                          |ZA14_Pin|ZA15_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, PS2_CLK_Pin|PS2_DAT_Pin|LED1_Pin|LED2_Pin 
@@ -534,7 +601,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, ZD0_Pin|ZD1_Pin|ZD2_Pin|ZD3_Pin 
                           |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin 
                           |ZINT_Pin|ZNMI_Pin|ZIORQ_Pin|ZRD_Pin 
-                          |ZWR_Pin|ZMREQ_Pin, GPIO_PIN_SET);
+                          |ZWR_Pin|ZMREQ_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : ZA2_Pin ZA3_Pin ZA4_Pin ZA5_Pin 
                            ZA6_Pin ZA7_Pin ZA8_Pin ZA9_Pin 
@@ -544,7 +611,7 @@ static void MX_GPIO_Init(void)
                           |ZA6_Pin|ZA7_Pin|ZA8_Pin|ZA9_Pin 
                           |ZA10_Pin|ZA11_Pin|ZA12_Pin|ZA13_Pin 
                           |ZA14_Pin|ZA15_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
@@ -597,7 +664,7 @@ static void MX_GPIO_Init(void)
                           |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin 
                           |ZINT_Pin|ZNMI_Pin|ZIORQ_Pin|ZRD_Pin 
                           |ZWR_Pin|ZMREQ_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
@@ -634,13 +701,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-
 }
 
 /* USER CODE BEGIN 4 */
@@ -651,8 +711,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
 	if (out_proc.interrupt != NULL)
 		out_proc.interrupt();
-	volatile int i = 0;
-	for ( ; i<10000000 ; ++i) {}
 	GPIOE->BSRR = GPIO_BSRR_BR2;
 	__enable_irq();
 }
@@ -664,6 +722,24 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /* USER CODE END 4 */
+
+/* StartDefaultTask function */
+void StartDefaultTask(void const * argument)
+{
+  /* init code for FATFS */
+  MX_FATFS_Init();
+
+  /* init code for USB_HOST */
+  MX_USB_HOST_Init();
+
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END 5 */ 
+}
 
 /**
   * @brief  Period elapsed callback in non blocking mode

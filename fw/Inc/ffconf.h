@@ -52,6 +52,7 @@
 / Additional user header to be used  
 /-----------------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include "cmsis_os.h"    /* _FS_REENTRANT set to 1 */
 #include "bsp_driver_sd.h"
 #include "usbh_core.h"
 #include "usbh_msc.h"
@@ -143,7 +144,7 @@
 /   950 - Traditional Chinese (DBCS)
 */
 
-#define _USE_LFN     1    /* 0 to 3 */
+#define _USE_LFN     2    /* 0 to 3 */
 #define _MAX_LFN     255  /* Maximum LFN length to handle (12 to 255) */
 /* The _USE_LFN switches the support of long file name (LFN).
 /
@@ -272,7 +273,7 @@
 /      can be opened simultaneously under file lock control. Note that the file
 /      lock control is independent of re-entrancy. */
 
-#define _FS_REENTRANT    0  /* 0:Disable or 1:Enable */
+#define _FS_REENTRANT    1  /* 0:Disable or 1:Enable */
 #define _FS_TIMEOUT      1000 /* Timeout period in unit of time ticks */
 #define _SYNC_t          osSemaphoreId 
 /* The option _FS_REENTRANT switches the re-entrancy (thread safe) of the FatFs

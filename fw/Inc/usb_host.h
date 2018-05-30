@@ -99,8 +99,6 @@ typedef enum {
 /** @brief USB Host initialization function. */
 void MX_USB_HOST_Init(void);
 
-void MX_USB_HOST_Process(void);
-
 /**
   * @}
   */

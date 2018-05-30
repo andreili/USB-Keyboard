@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" noNamespaceSchemaLocation="project_projx.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
 
   <SchemaVersion>2.1</SchemaVersion>
 
@@ -19,28 +19,28 @@
           <PackID>Keil.STM32F4xx_DFP.2.11.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x20000000-0x2001FFFF) IRAM2(0x10000000-0x1000FFFF) IROM(0x8000000-0x807FFFF) CLOCK(25000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
-          <FlashUtilSpec />
-          <StartupFile />
-          <FlashDriverDll />
-          <DeviceId />
-          <RegisterFile />
-          <MemoryEnv />
-          <Cmp />
-          <Asm />
-          <Linker />
-          <OHString />
-          <InfinionOptionDll />
-          <SLE66CMisc />
-          <SLE66AMisc />
-          <SLE66LinkerMisc />
+          <FlashUtilSpec></FlashUtilSpec>
+          <StartupFile></StartupFile>
+          <FlashDriverDll></FlashDriverDll>
+          <DeviceId></DeviceId>
+          <RegisterFile></RegisterFile>
+          <MemoryEnv></MemoryEnv>
+          <Cmp></Cmp>
+          <Asm></Asm>
+          <Linker></Linker>
+          <OHString></OHString>
+          <InfinionOptionDll></InfinionOptionDll>
+          <SLE66CMisc></SLE66CMisc>
+          <SLE66AMisc></SLE66AMisc>
+          <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>$$Device:STM32F407VETx$CMSIS\SVD\STM32F40x.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath />
-          <IncludePath />
-          <LibPath />
-          <RegisterFilePath />
-          <DBRegisterFilePath />
+          <BinPath></BinPath>
+          <IncludePath></IncludePath>
+          <LibPath></LibPath>
+          <RegisterFilePath></RegisterFilePath>
+          <DBRegisterFilePath></DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -55,15 +55,15 @@
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\lst\</ListingPath>
+          <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -72,8 +72,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -82,15 +82,15 @@
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString />
+          <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -104,8 +104,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument />
-          <IncludeLibraryModules />
+          <CustomArgument></CustomArgument>
+          <IncludeLibraryModules></IncludeLibraryModules>
           <ComprImg>0</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -139,10 +139,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4 />
-          <pFcarmOut />
-          <pFcarmGrp />
-          <pFcArmRoot />
+          <Flash4></Flash4>
+          <pFcarmOut></pFcarmOut>
+          <pFcarmGrp></pFcarmGrp>
+          <pFcArmRoot></pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -175,7 +175,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M4"</AdsCpuType>
-            <RvctDeviceName />
+            <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -307,7 +307,7 @@
                 <Size>0x10000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector />
+            <RvctStartVector></RvctStartVector>
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -334,8 +334,8 @@
             <VariousControls>
               <MiscControls>-Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-undef -Wno-packed -Wno-sign-conversion -Wno-conversion -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-unused-parameter -Wno-unused-function -Wno-covered-switch-default -Wno-switch-enum</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
-              <Undefine />
-              <IncludePath>../Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc;   ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;   ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc;   ../Middlewares/ST/STM32_USB_Host_Library/Class/AUDIO/Inc;   ../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc;   ../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc;   ../Middlewares/ST/STM32_USB_Host_Library/Class/MSC/Inc;   ../Middlewares/ST/STM32_USB_Host_Library/Class/MTP/Inc;   ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;   ../Middlewares/Third_Party/FatFs/src;   ../Drivers/CMSIS/Include;   ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F</IncludePath>
+              <Undefine></Undefine>
+              <IncludePath>../Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc;        ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;        ../Middlewares/ST/STM32_USB_Host_Library/Core/Inc;        ../Middlewares/ST/STM32_USB_Host_Library/Class/AUDIO/Inc;        ../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Inc;        ../Middlewares/ST/STM32_USB_Host_Library/Class/HID/Inc;        ../Middlewares/ST/STM32_USB_Host_Library/Class/MSC/Inc;        ../Middlewares/ST/STM32_USB_Host_Library/Class/MTP/Inc;        ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;        ../Middlewares/Third_Party/FatFs/src;        ../Drivers/CMSIS/Include;        ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -349,10 +349,10 @@
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
             <VariousControls>
-              <MiscControls />
-              <Define />
-              <Undefine />
-              <IncludePath />
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath>..\\Inc</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -364,13 +364,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase />
-            <ScatterFile />
-            <IncludeLibs />
-            <IncludeLibsPath />
-            <Misc />
-            <LinkerInputFile />
-            <DisabledWarnings />
+            <pXoBase></pXoBase>
+            <ScatterFile></ScatterFile>
+            <IncludeLibs></IncludeLibs>
+            <IncludeLibsPath></IncludeLibsPath>
+            <Misc></Misc>
+            <LinkerInputFile></LinkerInputFile>
+            <DisabledWarnings></DisabledWarnings>
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -441,7 +441,7 @@
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
                   <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>5</RVCTZI>
+                  <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>5</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
                   <IncludeInBuild>2</IncludeInBuild>
@@ -450,8 +450,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument />
-                  <IncludeLibraryModules />
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -478,10 +478,10 @@
                     <v6Lto>2</v6Lto>
                     <v6WtE>2</v6WtE>
                     <VariousControls>
-                      <MiscControls />
-                      <Define />
-                      <Undefine />
-                      <IncludePath />
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -495,7 +495,7 @@
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
                   <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>5</RVCTZI>
+                  <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>5</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
                   <IncludeInBuild>2</IncludeInBuild>
@@ -504,8 +504,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument />
-                  <IncludeLibraryModules />
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -532,10 +532,10 @@
                     <v6Lto>2</v6Lto>
                     <v6WtE>2</v6WtE>
                     <VariousControls>
-                      <MiscControls />
-                      <Define />
-                      <Undefine />
-                      <IncludePath />
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -559,7 +559,7 @@
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
                   <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>5</RVCTZI>
+                  <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>5</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
                   <IncludeInBuild>2</IncludeInBuild>
@@ -568,8 +568,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument />
-                  <IncludeLibraryModules />
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -596,10 +596,10 @@
                     <v6Lto>2</v6Lto>
                     <v6WtE>2</v6WtE>
                     <VariousControls>
-                      <MiscControls />
-                      <Define />
-                      <Undefine />
-                      <IncludePath />
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -633,7 +633,7 @@
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
                   <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>5</RVCTZI>
+                  <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>5</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
                   <IncludeInBuild>2</IncludeInBuild>
@@ -642,8 +642,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument />
-                  <IncludeLibraryModules />
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -670,10 +670,10 @@
                     <v6Lto>2</v6Lto>
                     <v6WtE>2</v6WtE>
                     <VariousControls>
-                      <MiscControls />
-                      <Define />
-                      <Undefine />
-                      <IncludePath />
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -688,6 +688,55 @@
               <FileName>fw_updater.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\fw_updater.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>9</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>2</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>2</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
               <FileName>ps2.c</FileName>
@@ -703,6 +752,11 @@
               <FileName>mod_zxbus.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\mod_zxbus.c</FilePath>
+            </File>
+            <File>
+              <FileName>freertos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/freertos.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -764,23 +818,7 @@
               <FileType>1</FileType>
               <FilePath>../Middlewares/ST/STM32_USB_Host_Library/Class/MSC/Src/usbh_msc.c</FilePath>
             </File>
-          <File>
-              <FileName>usbh_cdc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/STM32_USB_Host_Library/Class/CDC/Src/usbh_cdc.c</FilePath>
-            </File><File>
-              <FileName>usbh_audio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/STM32_USB_Host_Library/Class/AUDIO/Src/usbh_audio.c</FilePath>
-            </File><File>
-              <FileName>usbh_mtp_ptp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/STM32_USB_Host_Library/Class/MTP/Src/usbh_mtp_ptp.c</FilePath>
-            </File><File>
-              <FileName>usbh_mtp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Middlewares/ST/STM32_USB_Host_Library/Class/MTP/Src/usbh_mtp.c</FilePath>
-            </File></Files>
+          </Files>
         </Group>
         <Group>
           <GroupName>Drivers/STM32F4xx_HAL_Driver</GroupName>
@@ -882,8 +920,8 @@
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
                   <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument />
-                  <IncludeLibraryModules />
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
                   <ComprImg>1</ComprImg>
                 </CommonProperty>
                 <FileArmAds>
@@ -910,10 +948,10 @@
                     <v6Lto>2</v6Lto>
                     <v6WtE>2</v6WtE>
                     <VariousControls>
-                      <MiscControls />
-                      <Define />
-                      <Undefine />
-                      <IncludePath />
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -967,6 +1005,56 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Middlewares/FreeRTOS</GroupName>
+          <Files>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F\port.c</FilePath>
+            </File>
+            <File>
+              <FileName>croutine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/croutine.c</FilePath>
+            </File>
+            <File>
+              <FileName>heap_4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</FilePath>
+            </File>
+            <File>
+              <FileName>tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>event_groups.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/timers.c</FilePath>
+            </File>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/list.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmsis_os.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
@@ -974,16 +1062,16 @@
   </Targets>
 
   <RTE>
-    <apis />
+    <apis/>
     <components>
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="4.3.0" condition="CMSIS Core">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0" />
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0"/>
         <targetInfos>
-          <targetInfo name="usb_keyb" />
+          <targetInfo name="usb_keyb"/>
         </targetInfos>
       </component>
     </components>
-    <files />
+    <files/>
   </RTE>
 
 </Project>

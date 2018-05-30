@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * @file    sd_diskio.h (based on sd_diskio_dma_rtos_template.h v2.0.2)
-  * @brief   Header for sd_diskio.c module
+  * File Name          : freertos.c
+  * Description        : Code for freertos applications
   ******************************************************************************
   * This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -46,26 +46,30 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __SD_DISKIO_H
-#define __SD_DISKIO_H
-
-/* USER CODE BEGIN firstSection */ 
-/* can be used to modify / undefine following code or add new definitions */
-/* USER CODE END firstSection */
-
 /* Includes ------------------------------------------------------------------*/
-#include "bsp_driver_sd.h"
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-extern const Diskio_drvTypeDef  SD_Driver;
+#include "FreeRTOS.h"
+#include "task.h"
 
-/* USER CODE BEGIN lastSection */ 
-/* can be used to modify / undefine previous code or add new definitions */
-/* USER CODE END lastSection */
+/* USER CODE BEGIN Includes */     
 
-#endif /* __SD_DISKIO_H */
+/* USER CODE END Includes */
+
+/* Variables -----------------------------------------------------------------*/
+
+/* USER CODE BEGIN Variables */
+
+/* USER CODE END Variables */
+
+/* Function prototypes -------------------------------------------------------*/
+
+/* USER CODE BEGIN FunctionPrototypes */
+
+/* USER CODE END FunctionPrototypes */
+
+/* Hook prototypes */
+
+/* USER CODE BEGIN Application */
+     
+/* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
