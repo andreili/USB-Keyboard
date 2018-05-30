@@ -127,16 +127,29 @@ extern USBH_HandleTypeDef hUsbHostFS;
 
 void read_config(void)
 {
-	usb_mode = OUT0_GPIO_Port->IDR & 0x07;
+	usb_mode = 0;
+	usb_mode |= HAL_GPIO_ReadPin(OUT0_GPIO_Port, OUT0_Pin) << 2;
+	usb_mode |= HAL_GPIO_ReadPin(OUT1_GPIO_Port, OUT1_Pin) << 1;
+	usb_mode |= HAL_GPIO_ReadPin(OUT2_GPIO_Port, OUT2_Pin) << 0;
+	
 	matrix_mode = 0;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX0_GPIO_Port, MTX0_Pin) << 0;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX1_GPIO_Port, MTX1_Pin) << 1;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX2_GPIO_Port, MTX2_Pin) << 2;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX3_GPIO_Port, MTX3_Pin) << 3;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX4_GPIO_Port, MTX4_Pin) << 4;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX5_GPIO_Port, MTX5_Pin) << 5;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX6_GPIO_Port, MTX6_Pin) << 6;
-	matrix_mode |= HAL_GPIO_ReadPin(MTX7_GPIO_Port, MTX7_Pin) << 7;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX0_GPIO_Port, MTX0_Pin) << 7;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX1_GPIO_Port, MTX1_Pin) << 6;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX2_GPIO_Port, MTX2_Pin) << 5;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX3_GPIO_Port, MTX3_Pin) << 4;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX4_GPIO_Port, MTX4_Pin) << 3;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX5_GPIO_Port, MTX5_Pin) << 2;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX6_GPIO_Port, MTX6_Pin) << 1;
+	matrix_mode |= HAL_GPIO_ReadPin(MTX7_GPIO_Port, MTX7_Pin) << 0;
+}
+
+int fputc(int ch, FILE *f)
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the USART1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart6, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
 }
 
 /* USER CODE END 0 */
