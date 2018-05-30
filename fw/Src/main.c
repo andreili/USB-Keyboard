@@ -601,7 +601,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, ZA2_Pin|ZA3_Pin|ZA4_Pin|ZA5_Pin 
                           |ZA6_Pin|ZA7_Pin|ZA8_Pin|ZA9_Pin 
                           |ZA10_Pin|ZA11_Pin|ZA12_Pin|ZA13_Pin 
-                          |ZA14_Pin|ZA15_Pin, GPIO_PIN_RESET);
+                          |ZA14_Pin|ZA15_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, PS2_CLK_Pin|PS2_DAT_Pin|LED1_Pin|LED2_Pin 
@@ -614,7 +614,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, ZD0_Pin|ZD1_Pin|ZD2_Pin|ZD3_Pin 
                           |ZD4_Pin|ZD5_Pin|ZD6_Pin|ZD7_Pin 
                           |ZINT_Pin|ZNMI_Pin|ZIORQ_Pin|ZRD_Pin 
-                          |ZWR_Pin|ZMREQ_Pin, GPIO_PIN_RESET);
+                          |ZWR_Pin|ZMREQ_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : ZA2_Pin ZA3_Pin ZA4_Pin ZA5_Pin 
                            ZA6_Pin ZA7_Pin ZA8_Pin ZA9_Pin 
@@ -749,6 +749,9 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+		if (out_proc.proc != NULL)
+			out_proc.proc();
+		
     osDelay(1);
   }
   /* USER CODE END 5 */ 

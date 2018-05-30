@@ -54,22 +54,20 @@ void matrix_init(void)
 	
 extern HID_KEYBD_Info_TypeDef     keybd_info;
 
-void matrix_fill(TIM_HandleTypeDef *htim)
+void matrix_proc()
 {
-	__disable_irq();
-	
 	const uint8_t* kbd_matrix = kbd_mc7007_lat;
 	const uint8_t* kbd_matrix_f = kbd_mc7007_f;
-	/*switch (matrix_mode)
+	switch (matrix_mode)
 	{
 		default:
 		case SW_MODE_RK86:
-			kbd_matrix = kbd_rk86;
+			kbd_matrix = kbd_rk86_lat;
 			break;
 		case SW_MODE_MC7007:
-			kbd_matrix = kbd_mc7007;
+			kbd_matrix = kbd_mc7007_lat;
 			break;
-	}*/
+	}
 		
 	for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
 		kbd_data[i] = 0;
@@ -92,8 +90,6 @@ void matrix_fill(TIM_HandleTypeDef *htim)
 		
 		CHECK_MTX(key_sc, kbd_matrix);
 	}
-	
-	__enable_irq();
 }
 
 void matrix_int(void)
@@ -117,7 +113,7 @@ void matrix_int(void)
 const kbd_proc_t proc_matrix =
 {
 	.init = matrix_init,
-	.proc = NULL,
+	.proc = matrix_proc,
 	.interrupt = matrix_int,
-	.periodic = matrix_fill
+	.periodic = NULL
 };
