@@ -66,7 +66,7 @@
 
 HCD_HandleTypeDef hhcd_USB_OTG_FS;
 void _Error_Handler(char * file, int line);
-//HCD_HandleTypeDef hhcd_USB_OTG_HS;
+HCD_HandleTypeDef hhcd_USB_OTG_HS;
 void _Error_Handler(char * file, int line);
 
 /* USER CODE BEGIN 0 */
@@ -113,7 +113,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(OTG_FS_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(OTG_FS_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
   /* USER CODE BEGIN USB_OTG_FS_MspInit 1 */
 
@@ -140,7 +140,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     __HAL_RCC_USB_OTG_HS_CLK_ENABLE();
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(OTG_HS_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(OTG_HS_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
   /* USER CODE BEGIN USB_OTG_HS_MspInit 1 */
 
@@ -271,13 +271,13 @@ USBH_StatusTypeDef USBH_LL_Init(USBH_HandleTypeDef *phost)
   }
   if (phost->id == HOST_HS) {
   /* Link the driver to the stack. */
-  /*hhcd_USB_OTG_HS.pData = phost;
+  hhcd_USB_OTG_HS.pData = phost;
   phost->pData = &hhcd_USB_OTG_HS;
 
   hhcd_USB_OTG_HS.Instance = USB_OTG_HS;
   hhcd_USB_OTG_HS.Init.Host_channels = 12;
   hhcd_USB_OTG_HS.Init.speed = HCD_SPEED_FULL;
-  hhcd_USB_OTG_HS.Init.dma_enable = ENABLE;
+  hhcd_USB_OTG_HS.Init.dma_enable = DISABLE;
   hhcd_USB_OTG_HS.Init.phy_itface = USB_OTG_EMBEDDED_PHY;
   hhcd_USB_OTG_HS.Init.Sof_enable = DISABLE;
   hhcd_USB_OTG_HS.Init.low_power_enable = DISABLE;
@@ -288,7 +288,7 @@ USBH_StatusTypeDef USBH_LL_Init(USBH_HandleTypeDef *phost)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  USBH_LL_SetTimer(phost, HAL_HCD_GetCurrentFrame(&hhcd_USB_OTG_HS));*/
+  USBH_LL_SetTimer(phost, HAL_HCD_GetCurrentFrame(&hhcd_USB_OTG_HS));
   }
   return USBH_OK;
 }
