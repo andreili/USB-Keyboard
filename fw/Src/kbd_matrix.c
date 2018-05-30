@@ -7,8 +7,8 @@
 
 /*
 * GPIO map:
-*		PB00-PB11 - input
-*		PC04-PC15 - output
+*		PE00-PE11 - input
+*		PD04-PD15 - output
 *
 *
 */
@@ -29,18 +29,18 @@ void matrix_init(void)
   GPIO_InitStruct.Pin = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | 
 												GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | 
 												GPIO_PIN_14 | GPIO_PIN_15;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 	
-  GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | 
-												GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | 
-												GPIO_PIN_10 | GPIO_PIN_11;
+  GPIO_InitStruct.Pin = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | 
+												GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | 
+												GPIO_PIN_14 | GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 }
 
 #define CHECK_MTX(scancode, matrix) \
@@ -60,7 +60,7 @@ void matrix_fill(TIM_HandleTypeDef *htim)
 	
 	const uint8_t* kbd_matrix = kbd_mc7007_lat;
 	const uint8_t* kbd_matrix_f = kbd_mc7007_f;
-	/*switch (mode)
+	/*switch (matrix_mode)
 	{
 		default:
 		case SW_MODE_RK86:
@@ -96,10 +96,10 @@ void matrix_fill(TIM_HandleTypeDef *htim)
 	__enable_irq();
 }
 
-void matrix_proc(void)
+void matrix_int(void)
 {
 	__disable_irq();
-	uint16_t row = ~PORT_INP->IDR;
+	uint16_t row = ~(PORT_INP->IDR >> 4);
 	uint16_t i, idx;
 	// encode a bit index to row number
 	for (i=1, idx=0 ; i<0x1000 ; i<<=1, ++idx)
@@ -108,7 +108,8 @@ void matrix_proc(void)
 			row = idx;
 			break;
 		}
-	PORT_OUT->ODR = (PORT_OUT->ODR & 0x000f) | (~kbd_data[row]);
+	idx = ~(kbd_data[row] << 4);
+	PORT_OUT->ODR = (PORT_OUT->ODR & 0x000f) | idx;
 	__enable_irq();
 }
 
@@ -116,7 +117,7 @@ void matrix_proc(void)
 const kbd_proc_t proc_matrix =
 {
 	.init = matrix_init,
-	.proc = matrix_proc,
-	.interrupt = NULL,
+	.proc = NULL,
+	.interrupt = matrix_int,
 	.periodic = matrix_fill
 };
