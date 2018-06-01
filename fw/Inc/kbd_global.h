@@ -4,8 +4,11 @@
 #include "stm32f4xx_hal.h"
 #include "usbh_hid_keybd.h"
 
+#define KBD_VERSION ((uint32_t)0x00000012)
+
 //#define GUI_ENABLE
 #define KBD_DEBUG
+//#define IWDG_USE
 
 #define KBD_MATRIX_ROW 12
 #define KBD_MATRIX_COL 12

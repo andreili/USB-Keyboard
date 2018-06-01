@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 
-void update_fw(uint8_t *buf, uint32_t fw_size);
+uint8_t fw_update_check(void);
+void fw_update(void);
 
 #endif

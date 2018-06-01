@@ -184,7 +184,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  //MX_IWDG_Init();
+	#ifdef IWDG_USE
+  MX_IWDG_Init();
+	#endif
   MX_SDIO_SD_Init();
   MX_TIM4_Init();
   MX_USART6_UART_Init();
@@ -196,7 +198,7 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-	DEBUG_PR("\n\rUSB keboard module\n\r");
+	DEBUG_PR("\n\rUSB keboard module (v%i)\n\r", KBD_VERSION);
 	
 	read_config();
 	uint8_t mounted = 0;
@@ -746,7 +748,7 @@ void StartDefaultTask(void const * argument)
   MX_USB_HOST_Init();
 
   /* USER CODE BEGIN 5 */
-  /* Infinite loop */
+	
   for(;;)
   {
 		if (out_proc.proc != NULL)
