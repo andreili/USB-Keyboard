@@ -1,8 +1,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity usb_kbd is
-
 	port
 	(
 		clk		 : in	std_logic;
@@ -22,6 +22,7 @@ entity usb_kbd is
 		iintu		: in	std_logic;
 		
 		zrstn		: out	std_logic;
+		zwaitn	: out	std_logic;
 		iorqgen	: out	std_logic;
 		iodosn	: out	std_logic;
 		int0n		: out	std_logic;
@@ -33,59 +34,106 @@ entity usb_kbd is
 		ula		: out	std_logic;
 		da			: inout	std_logic_vector( 7 downto 0);
 		
-		vector 	: out	std_logic_vector(7 downto 0);
-		sintn		: out	std_logic
+		vector 	: inout	std_logic_vector(7 downto 0);
+		sintn		: out	std_logic;	-- сигнал для обработки прерывания
+		sintokn	: in	std_logic;	-- обработка прерывания завершена
+		dfrstmn	: in	std_logic;	-- данные для регистров в CPLD
+		
+		zaddr16	: out std_logic;
+		int_innero: out std_logic;
+		int_st	: out std_logic;
+		ctrig	: out std_logic
 	);
 
 end entity;
 
 architecture rtl of usb_kbd is
 
-signal int_to_stm	: std_logic;
-signal int_vector	: std_logic_vector(7 downto 0);
+	component vector_decode is
+		port
+		(
+			zaddr	 		: in	std_logic_vector(16 downto 0);
+			vector		: out	std_logic_vector(7 downto 0);
+			int_to_stm	: out	std_logic;
+			int_inner	: out	std_logic
+		);
+	end component;
 
-signal zaddr_full	: std_logic_vector(16 downto 0);
+	component trig_inner is
+		port
+		(
+			sig_to_tr	: in	std_logic;
+			a16			: in	std_logic;
+			tin			: in	std_logic;
+			vector		: in	std_logic_vector(7 downto 0);
+			data			: in	std_logic_vector(7 downto 0);
+			odata			: out	std_logic_vector(7 downto 0)
+		);
+	end component;
+
+signal int_to_stm		: std_logic;
+signal int_inner		: std_logic;
+signal int_vector		: std_logic_vector(7 downto 0);
+
+signal zaddr16i			: std_logic;
+signal zaddr16clk		: std_logic;
+
+signal dfrstmn_in		: std_logic;
+signal odata			: std_logic_vector(7 downto 0);
 
 begin
 
-zaddr_full(15 downto 0) <= zaddr;
+zaddr16clk <= zmreqn or zm1n;
 
-process (clk)
+process (zaddr16clk)
 begin
-	if (rising_edge(clk)) then
-		if (ziorqn = '1') then
-			int_vector <= (others => '0');
-			int_to_stm <= '1';
-		else
-			if (zaddr_full = "00000000011011111") then	-- version ZXMC
-				int_vector <= "00000001";
-				int_to_stm <= '0';
-			elsif ((zaddr_full(16) = '1') and (zaddr_full(7 downto 0) = "00011111")) then --Kjoy
-				int_vector <= "00000010";
-				int_to_stm <= '0';
-			elsif (zaddr_full(7 downto 0) = "01010111") then --SD data
-				int_vector <= "00000011";
-				int_to_stm <= '0';
-			elsif (zaddr_full(7 downto 0) = "01110111") then --SD command
-				int_vector <= "00000100";
-				int_to_stm <= '0';
-			elsif ((zaddr_full(16) = '1') and (zaddr_full(7 downto 0) = "01111111")) then --Fjoy
-				int_vector <= "00000101";
-				int_to_stm <= '0';
-			elsif ((zaddr_full(16) = '1') and (zaddr_full(7 downto 0) = "11011111")) then --Kjoy
-				int_vector <= "00000110";
-				int_to_stm <= '0';
-			else
-				int_vector <= (others => '0');
-				int_to_stm <= '1';
-			end if;
-		end if;
+	if (rising_edge(zaddr16clk)) then
+		zaddr16i <= (not (zdata(2) or zdata(5))) and zdata(0) and zdata(1) and zdata(4) and zdata(6) and zdata(7);
 	end if;
 end process;
 
+dec: vector_decode
+	port map (
+		zaddr			=> zaddr16i & zaddr,
+		vector		=> int_vector,
+		int_to_stm	=> int_to_stm,
+		int_inner	=> int_inner
+	);
+
+dfrstmn_in <= '0' when ((dfrstmn = '0') and (ziorqn = '1'))
+					else '1';
+vector <= int_vector when (dfrstmn_in = '1') else (others => 'Z');
+
+trig: trig_inner
+	port map (
+		sig_to_tr	=> dfrstmn_in,
+		a16			=> zaddr16i,
+		tin			=> tin,
+		vector		=> vector,
+		data			=> da,
+		odata			=> odata
+	);
+
 -- to outputs
-sintn <= not int_to_stm;
-iorqgen <= not int_to_stm;
-vector <= int_vector;
+process (int_to_stm, sintokn)
+begin
+	if (sintokn = '0') then
+		zwaitn <= 'Z';
+	elsif (falling_edge(int_to_stm)) then
+		zwaitn <= '0';
+	end if;
+end process;
+--zwaitn <= int_to_stm and sintokn;
+sintn <= int_to_stm;
+
+zdata <= odata when ((int_inner = '0') and (ziorqn = '0') and (zrdn = '0'))
+	else (others => 'Z');
+
+iorqgen <= int_to_stm and int_inner;
+
+zaddr16 <= zaddr16i;
+int_innero <= int_inner;
+int_st <= int_to_stm;
+ctrig <= zaddr16clk;
 
 end rtl;

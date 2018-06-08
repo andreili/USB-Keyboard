@@ -17,3 +17,14 @@ Listings
 *.hex
 *bak
 *.crf
+
+# Quartus files
+*/incremental_db/*
+*/db/*
+.*
+*/output_files/*
+*/simulation/*
+*.temp
+*.rpt
+*.ddb
+*.qws
