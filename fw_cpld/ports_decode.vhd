@@ -22,6 +22,8 @@ end entity;
 architecture rtl of ports_decode is
 
 -- ports
+signal sel_FEi			: std_logic;
+signal sel_00DFi		: std_logic;
 signal IOGE_FE			: std_logic;
 signal sel_FF			: std_logic;
 signal IOGE_FF			: std_logic;
@@ -41,10 +43,10 @@ signal IOGE_DFFD		: std_logic;
 
 begin
 
-sel_FE <=	addr(7) and addr(6) and addr(5) and addr(4) and
+sel_FEi <=	addr(7) and addr(6) and addr(5) and addr(4) and
 				addr(3) and addr(2) and addr(1) and (not addr(0)) and
 				(not ziorqn) and (not zrdn);
-sel_00DF <=	(not addr(16)) and 
+sel_00DFi <=(not addr(16)) and 
 				(not addr(15)) and (not addr(14)) and (not addr(13)) and (not addr(12)) and
 				(not addr(11)) and (not addr(10)) and (not addr(9)) and (not addr(8)) and
 				addr(7) and addr(6) and (not addr(5)) and addr(4) and
@@ -98,6 +100,8 @@ sel_DFFD	<=	addr(15) and addr(14) and (not addr(13)) and addr(12) and
 				(not ziorqn);
 IOGE_DFFD<= sel_DFFD and (not zrdn);
 
-iorqgen <= not (IOGE_FF or IOGE_1FFD or IOGE_7FFD or IOGE_BFFF or IOGE_DFFD);
+iorqgen <= not (sel_FEi or sel_00DFi or IOGE_FF or IOGE_1FFD or IOGE_7FFD or IOGE_BFFF or IOGE_DFFD);
+sel_FE <= sel_FEi;
+sel_00DF <= sel_00DFi;
 
 end rtl;

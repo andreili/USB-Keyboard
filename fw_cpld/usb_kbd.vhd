@@ -84,6 +84,7 @@ signal addr				: std_logic_vector(17 downto 0);
 
 -- vector decoding
 signal vector			: std_logic_vector(7 downto 0);
+signal iorqgn_ports	: std_logic;
 
 -- keyboard
 signal sel_FE			: std_logic;
@@ -126,7 +127,7 @@ dec: ports_decode
 		zm1n,
 		addr,
 		zdosn,
-		iorqgen,
+		iorqgn_ports,
 		sel_FE,
 		sel_00DF
 	);
@@ -162,6 +163,8 @@ zdata <=	'0' & tin & '0' & zxkbd0 when ((sel_FE = '1') and (addr(15 downto 8) = 
 			(others => 'Z');
 
 -- IO
+sintn <= not int_to_stm;
+iorqgen <= iorqgn_ports and (not int_to_stm);
 da <= vector when (dasel = '1')
 		else zdata when ((dasel = '0') and (zwrn = '0'))
 		else (others => 'Z');
