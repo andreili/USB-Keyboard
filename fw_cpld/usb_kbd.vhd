@@ -49,6 +49,32 @@ end entity;
 
 architecture rtl of usb_kbd is
 
+	component vector_mux is
+		port
+		(
+			addr	 		: in	std_logic_vector(17 downto 0);
+			vector		: out	std_logic_vector( 7 downto 0);
+			int_to_stm	: out	std_logic
+		);
+	end component;
+
+	component ports_decode is
+		port
+		(
+			ziorqn	: in	std_logic;
+			zrdn		: in	std_logic;
+			zwrn		: in	std_logic;
+			zm1n		: in	std_logic;
+			addr	 	: in	std_logic_vector(17 downto 0);
+			zdosn		: in	std_logic;
+			
+			iorqgen	: out	std_logic;
+			
+			sel_FE	: out	std_logic;
+			sel_00DF	: out	std_logic
+		);
+	end component;
+
 signal int_to_stm		: std_logic;
 signal int_inner		: std_logic;
 
@@ -57,12 +83,10 @@ signal addr16clk		: std_logic;
 signal addr				: std_logic_vector(17 downto 0);
 
 -- vector decoding
-signal mux_lo			: std_logic;
-signal mux_hi			: std_logic;
 signal vector			: std_logic_vector(7 downto 0);
 
 -- keyboard
-signal IOGE_FE			: std_logic;
+signal sel_FE			: std_logic;
 signal sel_00DF		: std_logic;
 signal zxkbd0			: std_logic_vector(4 downto 0);
 signal zxkbd1			: std_logic_vector(4 downto 0);
@@ -73,23 +97,6 @@ signal zxkbd5			: std_logic_vector(4 downto 0);
 signal zxkbd6			: std_logic_vector(4 downto 0);
 signal zxkbd7			: std_logic_vector(4 downto 0);
 signal kbd_data		: std_logic_vector(7 downto 0);
-
--- ports
-signal sel_FF			: std_logic;
-signal IOGE_FF			: std_logic;
-signal sel_1FFD		: std_logic;
-signal IOGE_1FFD		: std_logic;
-signal sel_3FFE		: std_logic;
-signal IOGE_3FFE		: std_logic;
-signal sel_7FFD		: std_logic;
-signal sel_7FFD_wr1	: std_logic;
-signal sel_7FFD_wr2	: std_logic;
-signal sel_7FFD_wr	: std_logic;
-signal IOGE_7FFD		: std_logic;
-signal sel_BFFF		: std_logic;
-signal IOGE_BFFF		: std_logic;
-signal sel_DFFD		: std_logic;
-signal IOGE_DFFD		: std_logic;
 
 begin
 
@@ -104,15 +111,25 @@ begin
 	end if;
 end process;
 
--- vector decoding
-mux_lo <= (addr(15) and addr(3));
-vector(3 downto 0) <= addr(7 downto 4) when (mux_lo= '1')		-- L
-						else addr(3 downto 0);								-- l
-mux_hi <= (addr(15) and addr(3)) or addr(7);
-vector(7 downto 4) <= addr(7 downto 4) when (mux_hi = '0')		-- h
-						else addr(15 downto 12) when (mux_lo = '0')	-- H
-						else addr(11 downto 8);								-- L
-int_to_stm <= '0' when (vector > x"00") else '1';
+mux: vector_mux
+	port map (
+		addr,
+		vector,
+		int_to_stm
+	);
+
+dec: ports_decode
+	port map (
+		ziorqn,
+		zrdn,
+		zwrn,
+		zm1n,
+		addr,
+		zdosn,
+		iorqgen,
+		sel_FE,
+		sel_00DF
+	);
 
 -- keyboard
 process (joy(3))
@@ -133,69 +150,16 @@ begin
 	end if;
 end process;
 
-IOGE_FE <=	addr(7) and addr(6) and addr(5) and addr(4) and
-				addr(3) and addr(2) and addr(1) and (not addr(0)) and
-				(not ziorqn) and (not zrdn);
-sel_00DF <=	(not addr(16)) and 
-				(not addr(15)) and (not addr(14)) and (not addr(13)) and (not addr(12)) and
-				(not addr(11)) and (not addr(10)) and (not addr(9)) and (not addr(8)) and
-				addr(7) and addr(6) and (not addr(5)) and addr(4) and
-				addr(3) and addr(2) and addr(1) and addr(0) and
-				(not ziorqn) and (not zrdn);
-
-zdata <=	'0' & tin & '0' & zxkbd0 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"80")) else
-			'0' & tin & '0' & zxkbd1 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"40")) else
-			'0' & tin & '0' & zxkbd2 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"30")) else
-			'0' & tin & '0' & zxkbd3 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"10")) else
-			'0' & tin & '0' & zxkbd4 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"08")) else
-			'0' & tin & '0' & zxkbd5 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"04")) else
-			'0' & tin & '0' & zxkbd6 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"02")) else
-			'0' & tin & '0' & zxkbd7 when ((IOGE_FE = '1') and (addr(15 downto 8) = x"01")) else
+zdata <=	'0' & tin & '0' & zxkbd0 when ((sel_FE = '1') and (addr(15 downto 8) = x"80")) else
+			'0' & tin & '0' & zxkbd1 when ((sel_FE = '1') and (addr(15 downto 8) = x"40")) else
+			'0' & tin & '0' & zxkbd2 when ((sel_FE = '1') and (addr(15 downto 8) = x"30")) else
+			'0' & tin & '0' & zxkbd3 when ((sel_FE = '1') and (addr(15 downto 8) = x"10")) else
+			'0' & tin & '0' & zxkbd4 when ((sel_FE = '1') and (addr(15 downto 8) = x"08")) else
+			'0' & tin & '0' & zxkbd5 when ((sel_FE = '1') and (addr(15 downto 8) = x"04")) else
+			'0' & tin & '0' & zxkbd6 when ((sel_FE = '1') and (addr(15 downto 8) = x"02")) else
+			'0' & tin & '0' & zxkbd7 when ((sel_FE = '1') and (addr(15 downto 8) = x"01")) else
 			x"30" when (sel_00DF = '1') else
 			(others => 'Z');
-
--- ports
-sel_FF	<=	(not addr(17)) and addr(16) and
-				addr(7) and addr(6) and addr(5) and addr(4) and
-				addr(3) and addr(2) and addr(1) and addr(0) and
-				(not ziorqn);
-IOGE_FF	<=	sel_FF and (not zrdn);
-sel_1FFD	<=	(not addr(16)) and 
-				(not addr(15)) and (not addr(14)) and (not addr(13)) and addr(12) and
-				addr(11) and addr(10) and addr(9) and addr(8) and
-				addr(7) and addr(6) and addr(5) and addr(4) and
-				addr(3) and addr(2) and (not addr(1)) and addr(0) and
-				(not ziorqn);
-IOGE_1FFD<=	sel_1FFD and (not zrdn);
-sel_3FFE	<=	(not addr(16)) and 
-				(not addr(15)) and (not addr(14)) and addr(13) and addr(12) and
-				addr(11) and addr(10) and addr(9) and addr(8) and
-				addr(7) and addr(6) and addr(5) and addr(4) and
-				addr(3) and addr(2) and addr(1) and (not addr(0)) and
-				(not ziorqn);
---IOGE_3FFE<=	sel_3FFE and (not zrdn);
-sel_7FFD	<=	(not addr(15)) and addr(14) and addr(13) and addr(12) and
-				addr(11) and addr(10) and addr(9) and addr(8) and
-				addr(7) and addr(6) and addr(5) and addr(4) and
-				addr(3) and addr(2) and (not addr(1)) and addr(0) and
-				(not ziorqn);
-sel_7FFD_wr1	<= (not addr(16)) and (not addr(15)) and addr(14) and addr(2) and (not addr(1));
-sel_7FFD_wr2	<= addr(16) and (not addr(15)) and addr(2) and (not addr(1));
-sel_7FFD_wr	<= (sel_7FFD_wr1 or sel_7FFD_wr2) and (not zwrn);
-IOGE_7FFD<=	sel_1FFD and (not zrdn);
-sel_BFFF	<=	(not addr(16)) and
-				addr(15) and (not addr(14)) and addr(13) and addr(12) and
-				addr(11) and addr(10) and addr(9) and addr(8) and
-				addr(7) and addr(6) and addr(5) and addr(4) and
-				addr(3) and addr(2) and addr(1) and addr(0) and
-				(not ziorqn);
-IOGE_BFFF<= sel_BFFF and (not zrdn);
-sel_DFFD	<=	addr(15) and addr(14) and (not addr(13)) and addr(12) and
-				addr(11) and addr(10) and addr(9) and addr(8) and
-				addr(7) and addr(6) and addr(5) and addr(4) and
-				addr(3) and addr(2) and (not addr(1)) and addr(0) and
-				(not ziorqn);
-IOGE_DFFD<= sel_DFFD and (not zrdn);
 
 -- IO
 da <= vector when (dasel = '1')
@@ -203,7 +167,5 @@ da <= vector when (dasel = '1')
 		else (others => 'Z');
 zdata <= da when ((dasel = '0') and (zrdn = '0'))
 		else (others => 'Z');
-
-iorqgen <= not (IOGE_FF or IOGE_FE or IOGE_1FFD or IOGE_7FFD or IOGE_BFFF or IOGE_DFFD);
 
 end rtl;
