@@ -143,7 +143,6 @@ set_location_assignment PIN_67 -to iintu
 set_location_assignment PIN_64 -to int0n
 set_location_assignment PIN_63 -to iorqgen
 set_location_assignment PIN_49 -to rdrn
-set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "d:/Projects/FPGA/orion/usb_keyb/fw_cpld/sim.vwf"
 set_global_assignment -name PRE_MAPPING_RESYNTHESIS ON
 set_global_assignment -name FORCE_FITTER_TO_AVOID_PERIPHERY_PLACEMENT_WARNINGS ON
 set_global_assignment -name OPTIMIZE_IOC_REGISTER_PLACEMENT_FOR_TIMING "PACK ALL IO REGISTERS"
@@ -151,3 +150,7 @@ set_global_assignment -name ALM_REGISTER_PACKING_EFFORT HIGH
 set_global_assignment -name ECO_OPTIMIZE_TIMING ON
 set_global_assignment -name ECO_REGENERATE_REPORT ON
 set_global_assignment -name SLOW_SLEW_RATE ON
+set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
+set_global_assignment -name VHDL_SHOW_LMF_MAPPING_MESSAGES OFF
+set_global_assignment -name VHDL_FILE ports_inner.vhd
+set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE /media/Dev/Projects/usb_kbd/fw_cpld/sim.vwf
