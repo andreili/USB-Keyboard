@@ -99,8 +99,11 @@ uint8_t fw_update_check(void)
 		
 		// check version
 		if (version == KBD_VERSION)
+		{
 			// current version, exit
+			DEBUG_PR("Version matched, continue.\n\r");
 			return 0;
+		}
 	}
 	else
 		return 0;

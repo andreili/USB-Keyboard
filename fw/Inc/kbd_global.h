@@ -4,7 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "usbh_hid_keybd.h"
 
-#define KBD_VERSION ((uint32_t)0x00000012)
+#define KBD_VERSION ((uint32_t)0x00000003)
 
 //#define GUI_ENABLE
 #define KBD_DEBUG
