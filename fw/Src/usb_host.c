@@ -143,13 +143,13 @@ static void USBH_UserProcess1  (USBH_HandleTypeDef *phost, uint8_t id)
 
   case HOST_USER_DISCONNECTION:
 		DEBUG_PR("HS device disconnected\n\r");
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED4_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
   Appli_state = APPLICATION_DISCONNECT;
   break;
 
   case HOST_USER_CLASS_ACTIVE:
 		DEBUG_PR("HS device class active\n\r");
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED4_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
   Appli_state = APPLICATION_READY;
   break;
 
@@ -174,7 +174,7 @@ static void USBH_UserProcess2  (USBH_HandleTypeDef *phost, uint8_t id)
 
   case HOST_USER_DISCONNECTION:
 		DEBUG_PR("FS device disconnected\n\r");
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED4_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   Appli_state = APPLICATION_DISCONNECT;
   break;
 
@@ -182,7 +182,7 @@ static void USBH_UserProcess2  (USBH_HandleTypeDef *phost, uint8_t id)
 		DEBUG_PR("FS device class active\n\r");
 		if (fw_update_check() != 0)
 			fw_update();
-		//HAL_GPIO_WritePin(LED3_GPIO_Port, LED4_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
   Appli_state = APPLICATION_READY;
   break;
 
