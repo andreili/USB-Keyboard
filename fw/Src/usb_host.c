@@ -108,8 +108,6 @@ void MX_USB_HOST_Init(void)
   /* Init host Library, add supported class and start the library. */
   USBH_Init(&hUsbHostHS, USBH_UserProcess1, HOST_HS);
 
-  USBH_RegisterClass(&hUsbHostHS, USBH_MSC_CLASS);
-
   USBH_RegisterClass(&hUsbHostHS, USBH_HID_CLASS);
 
   USBH_Start(&hUsbHostHS);
