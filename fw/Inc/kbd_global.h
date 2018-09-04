@@ -29,7 +29,7 @@ extern uint16_t kbd_data[KBD_MATRIX_ROW];
 #define SW_MODE_MATRIX	0x00
 #define SW_MODE_PS2			0x01
 #define SW_MODE_ZXBUS		0x02
-#define SW_MODE_RES1		0x03
+#define SW_MODE_ORION		0x03
 #define SW_MODE_RES2		0x04
 #define SW_MODE_RES3		0x05
 #define SW_MODE_RES4		0x06
@@ -50,6 +50,7 @@ typedef struct
 extern const kbd_proc_t proc_matrix;
 extern const kbd_proc_t proc_ps2;
 extern const kbd_proc_t proc_zxbus;
+extern const kbd_proc_t proc_orion;
 extern const kbd_proc_t proc_dummy;
 
 #ifdef KBD_DEBUG

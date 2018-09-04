@@ -201,6 +201,7 @@ int main(void)
 	uint8_t mounted = 0;
 		
 	DEBUG_PR("Matrix: #%i\n\r", matrix_mode);
+	DEBUG_PR("Mode: #%i\n\r", usb_mode);
 	switch (usb_mode)
 	{
 	case SW_MODE_PS2: 
@@ -210,6 +211,10 @@ int main(void)
 	case SW_MODE_ZXBUS:
 		DEBUG_PR("Mode: ZX-BUS\n\r");
 		out_proc = proc_zxbus;
+		break;
+	case SW_MODE_ORION:
+		DEBUG_PR("Mode: ORION-NG\n\r");
+		out_proc = proc_orion;
 		break;
 	case SW_MODE_MATRIX:
 	default:
