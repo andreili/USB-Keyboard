@@ -49,8 +49,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-extern DMA_HandleTypeDef hdma_sdio;
-
 extern void _Error_Handler(char *, int);
 /* USER CODE BEGIN 0 */
 
@@ -63,6 +61,9 @@ void HAL_MspInit(void)
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
+
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
+  __HAL_RCC_PWR_CLK_ENABLE();
 
   HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
@@ -278,33 +279,6 @@ void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
     GPIO_InitStruct.Alternate = GPIO_AF12_SDIO;
     HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-    /* SDIO DMA Init */
-    /* SDIO Init */
-    hdma_sdio.Instance = DMA2_Stream3;
-    hdma_sdio.Init.Channel = DMA_CHANNEL_4;
-    hdma_sdio.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_sdio.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_sdio.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_sdio.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    hdma_sdio.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-    hdma_sdio.Init.Mode = DMA_PFCTRL;
-    hdma_sdio.Init.Priority = DMA_PRIORITY_LOW;
-    hdma_sdio.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-    hdma_sdio.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
-    hdma_sdio.Init.MemBurst = DMA_MBURST_INC4;
-    hdma_sdio.Init.PeriphBurst = DMA_PBURST_INC4;
-    if (HAL_DMA_Init(&hdma_sdio) != HAL_OK)
-    {
-      _Error_Handler(__FILE__, __LINE__);
-    }
-
-    /* Several peripheral DMA handle pointers point to the same DMA handle.
-     Be aware that there is only one stream to perform all the requested DMAs. */
-    /* Be sure to change transfer direction before calling
-     HAL_SD_ReadBlocks_DMA or HAL_SD_WriteBlocks_DMA. */
-    __HAL_LINKDMA(hsd,hdmarx,hdma_sdio);
-    __HAL_LINKDMA(hsd,hdmatx,hdma_sdio);
-
   /* USER CODE BEGIN SDIO_MspInit 1 */
 
   /* USER CODE END SDIO_MspInit 1 */
@@ -335,10 +309,6 @@ void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
                           |GPIO_PIN_12);
 
     HAL_GPIO_DeInit(GPIOD, GPIO_PIN_2);
-
-    /* SDIO DMA DeInit */
-    HAL_DMA_DeInit(hsd->hdmarx);
-    HAL_DMA_DeInit(hsd->hdmatx);
 
     /* SDIO interrupt DeInit */
     HAL_NVIC_DisableIRQ(SDIO_IRQn);

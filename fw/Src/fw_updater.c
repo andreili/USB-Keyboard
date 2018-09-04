@@ -63,7 +63,7 @@ void prepare_new_fw_region(void)
 	HAL_FLASH_Lock();
 }
 
-inline void flash_write(uint8_t* buf, uint32_t size, uint32_t start_addr)
+void flash_write(uint8_t* buf, uint32_t size, uint32_t start_addr)
 {
 	uint32_t wr_addr_start = start_addr;
 	uint32_t fw_offs = 0;
@@ -151,7 +151,7 @@ uint8_t fw_update_check(void)
 	return 0;
 }
 
-inline void flash_erase(void)
+void flash_erase(void)
 {
 	FLASH_EraseInitTypeDef EraseInitStruct;
 	uint32_t error_sector_num = 0;

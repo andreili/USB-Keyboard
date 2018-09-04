@@ -66,7 +66,6 @@ I2C_HandleTypeDef hi2c1;
 IWDG_HandleTypeDef hiwdg;
 
 SD_HandleTypeDef hsd;
-DMA_HandleTypeDef hdma_sdio;
 
 SPI_HandleTypeDef hspi1;
 
@@ -101,7 +100,6 @@ kbd_proc_t out_proc =
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_TIM4_Init(void);
@@ -183,7 +181,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
 	#ifdef IWDG_USE
   MX_IWDG_Init();
 	#endif
@@ -562,21 +559,6 @@ static void MX_USART6_UART_Init(void)
 
 }
 
-/** 
-  * Enable DMA controller clock
-  */
-static void MX_DMA_Init(void) 
-{
-  /* DMA controller clock enable */
-  __HAL_RCC_DMA2_CLK_ENABLE();
-
-  /* DMA interrupt init */
-  /* DMA2_Stream3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
-
-}
-
 /** Configure pins as 
         * Analog 
         * Input 
@@ -748,6 +730,10 @@ void StartDefaultTask(void const * argument)
   MX_USB_HOST_Init();
 
   /* USER CODE BEGIN 5 */
+	if (f_mount(&SDFatFS, SDPath, 1) == FR_OK)
+	{
+		printf("Mount SD OK\n\r");
+	}
 	
   for(;;)
   {
