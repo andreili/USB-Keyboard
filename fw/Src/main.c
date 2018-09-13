@@ -49,7 +49,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
-#include "cmsis_os.h"
 #include "fatfs.h"
 #include "usb_host.h"
 
@@ -73,8 +72,6 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim4;
 
 UART_HandleTypeDef huart6;
-
-osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -108,8 +105,8 @@ static void MX_TIM2_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_ETH_Init(void);
-void StartDefaultTask(void const * argument);
 static void MX_NVIC_Init(void);
+void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -185,6 +182,8 @@ int main(void)
   MX_IWDG_Init();
 	#endif
   MX_SDIO_SD_Init();
+  MX_FATFS_Init();
+  MX_USB_HOST_Init();
   MX_TIM4_Init();
   MX_USART6_UART_Init();
   MX_TIM2_Init();
@@ -230,43 +229,20 @@ int main(void)
 	HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
   /* USER CODE END 2 */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 1024);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
- 
-
-  /* Start scheduler */
-  osKernelStart();
-  
-  /* We should never get here as control is now taken by the scheduler */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	if (f_mount(&SDFatFS, SDPath, 1) == FR_OK)
+	{
+		printf("Mount SD OK\n\r");
+	}
+	
   while (1)
   {
+		if (out_proc.proc != NULL)
+			out_proc.proc();
 
   /* USER CODE END WHILE */
+    MX_USB_HOST_Process();
 
   /* USER CODE BEGIN 3 */
 
@@ -334,7 +310,7 @@ void SystemClock_Config(void)
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
   /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
 /**
@@ -344,16 +320,16 @@ void SystemClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* EXTI0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
   /* EXTI1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(EXTI1_IRQn, 5, 0);
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI1_IRQn);
   /* TIM2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM2_IRQn, 5, 0);
+  HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(TIM2_IRQn);
   /* SDIO_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SDIO_IRQn, 5, 0);
+  HAL_NVIC_SetPriority(SDIO_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(SDIO_IRQn);
 }
 
@@ -724,61 +700,6 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /* USER CODE END 4 */
-
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
-{
-  /* init code for FATFS */
-  MX_FATFS_Init();
-
-  /* init code for USB_HOST */
-  MX_USB_HOST_Init();
-
-  /* USER CODE BEGIN 5 */
-	if (f_mount(&SDFatFS, SDPath, 1) == FR_OK)
-	{
-		printf("Mount SD OK\n\r");
-	}
-	
-  for(;;)
-  {
-		if (out_proc.proc != NULL)
-			out_proc.proc();
-		
-    osDelay(1);
-  }
-  /* USER CODE END 5 */ 
-}
-
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM1 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM1) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-  else if (htim->Instance == TIM4) 
-	{
-		#ifdef GUI_ENABLE
-		if (PS2_SendRequest == RESET)
-			LCD_fill_mem();
-		#endif //GUI_ENABLE
-  }
-
-	if (out_proc.periodic != NULL)
-		out_proc.periodic(htim);
-  /* USER CODE END Callback 1 */
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.
