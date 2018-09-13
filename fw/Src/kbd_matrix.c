@@ -13,6 +13,8 @@
 *
 */
 
+kbd_matrix_t kbd_sel;
+
 uint8_t matrix_mode;
 
 uint16_t kbd_data[KBD_MATRIX_ROW];
@@ -45,50 +47,53 @@ void matrix_init(void)
 
 #define CHECK_MTX(scancode, matrix) \
 	{ \
-		uint8_t row = (matrix[scancode] & 0xf0) >> 4; \
-		if (row != 15) \
-		{ \
-			kbd_data[row] |= (1 << (matrix[scancode] & 0x0f)); \
-		} \
+		uint8_t pos = matrix[scancode]; \
+		if (pos != 0xff) \
+			kbd_data[(pos & 0xf0) >> 4] &= ~(1 << (pos & 0x0f)); \
 	}
 	
 extern HID_KEYBD_Info_TypeDef     keybd_info;
-
-void matrix_proc()
+	
+void matrix_sel(void)
 {
-	const uint8_t* kbd_matrix = kbd_mc7007_lat;
-	const uint8_t* kbd_matrix_f = kbd_mc7007_f;
 	switch (matrix_mode)
 	{
 		default:
 		case SW_MODE_RK86:
-			kbd_matrix = kbd_rk86_lat;
+			kbd_sel = kbd_rk86;
 			break;
 		case SW_MODE_MC7007:
-			kbd_matrix = kbd_mc7007_lat;
+			kbd_sel = kbd_mc7007;
 			break;
 	}
-		
+}
+
+void matrix_proc()
+{
 	for (int i=0 ; i<KBD_MATRIX_ROW ; ++i)
-		kbd_data[i] = 0;
+		kbd_data[i] = 0xffff;
 	
 	if (keybd_info.lctrl || keybd_info.rctrl)
-		CHECK_MTX(0, kbd_matrix_f);
+		CHECK_MTX(0, kbd_sel.mtx_fns);
 	if (keybd_info.lshift || keybd_info.rshift)
-		CHECK_MTX(1, kbd_matrix_f);
+		CHECK_MTX(1, kbd_sel.mtx_fns);
 	if (keybd_info.lalt || keybd_info.ralt)
-		CHECK_MTX(2, kbd_matrix_f);
+		CHECK_MTX(2, kbd_sel.mtx_fns);
 	if (keybd_info.lgui || keybd_info.rgui)
-		CHECK_MTX(3, kbd_matrix_f);
+		CHECK_MTX(3, kbd_sel.mtx_fns);
 	
+	uint8_t* mtx;
+	if ((keybd_info.lshift || keybd_info.rshift) && (kbd_sel.mtx_lat_shifted != 0))
+		mtx = kbd_sel.mtx_lat_shifted;
+	else
+		mtx = kbd_sel.mtx_lat;
+
 	for (int i=0 ; i<6 ; ++i)
 	{
 		uint8_t key_sc = keybd_info.keys[i];
-		
 		if (key_sc == 0)
 			continue;
-		
-		CHECK_MTX(key_sc, kbd_matrix);
+		CHECK_MTX(key_sc, mtx);
 	}
 }
 

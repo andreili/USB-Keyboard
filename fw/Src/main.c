@@ -113,6 +113,7 @@ void MX_USB_HOST_Process(void);
 void LCD_fill_mem(void);
 
 uint8_t usb_mode = SW_MODE_PS2;
+uint8_t running = 0;
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -164,6 +165,7 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+	__enable_irq();
 
   /* USER CODE BEGIN Init */
 
@@ -197,6 +199,7 @@ int main(void)
 	DEBUG_PR("\n\rUSB keboard module (v%i)\n\r", KBD_VERSION);
 	
 	read_config();
+	matrix_sel();
 	uint8_t mounted = 0;
 		
 	DEBUG_PR("Matrix: #%i\n\r", matrix_mode);
@@ -223,6 +226,7 @@ int main(void)
 	}
 	if (out_proc.init != NULL)
 		out_proc.init();
+	running = 1;
 	
 	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
@@ -686,9 +690,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	__disable_irq();
 	GPIOE->BSRR = GPIO_BSRR_BS2;
-	HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
-	if (out_proc.interrupt != NULL)
-		out_proc.interrupt();
+	if (running)
+	{
+		HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+		if (out_proc.interrupt != NULL)
+			out_proc.interrupt();
+	}
 	GPIOE->BSRR = GPIO_BSRR_BR2;
 	__enable_irq();
 }
