@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>313</width>
-    <height>253</height>
+    <width>413</width>
+    <height>303</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Keyboard matrix builder</string>
   </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
@@ -19,19 +19,29 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>313</width>
-     <height>20</height>
+     <width>413</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOpen">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
+    <addaction name="actionExport_header"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Раскладка</string>
+    </property>
+    <addaction name="actionLat"/>
+    <addaction name="actionCyr"/>
    </widget>
    <addaction name="menuOpen"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -44,17 +54,43 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
    <property name="text">
-    <string>Open...</string>
+    <string>&amp;Open...</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Save</string>
+    <string>&amp;Save</string>
    </property>
   </action>
   <action name="actionSave_as">
    <property name="text">
-    <string>Save as...</string>
+    <string>Save &amp;as...</string>
+   </property>
+  </action>
+  <action name="actionLat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Латиница</string>
+   </property>
+  </action>
+  <action name="actionCyr">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Киррилица</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionExport_header">
+   <property name="text">
+    <string>Export header</string>
    </property>
   </action>
  </widget>
