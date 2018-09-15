@@ -82,16 +82,12 @@ void matrix_proc()
 	if (keybd_info.lgui || keybd_info.rgui)
 		CHECK_MTX(3, kbd_sel.mtx_fns);
 	
-	uint8_t* mtx;
-	if ((keybd_info.lshift || keybd_info.rshift) && (kbd_sel.mtx_lat_shifted != 0))
-		mtx = kbd_sel.mtx_lat_shifted;
-	else
-		mtx = kbd_sel.mtx_lat;
+	uint8_t* mtx = kbd_sel.mtx_lat;
 
 	for (int i=0 ; i<6 ; ++i)
 	{
 		uint8_t key_sc = keybd_info.keys[i];
-		if (key_sc == 0)
+		if ((key_sc == 0) || (key_sc > 0x7f))
 			continue;
 		CHECK_MTX(key_sc, mtx);
 	}

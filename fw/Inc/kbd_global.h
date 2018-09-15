@@ -56,9 +56,7 @@ extern const kbd_proc_t proc_dummy;
 typedef struct 
 {
   uint8_t* mtx_lat;
-  uint8_t* mtx_lat_shifted;
   uint8_t* mtx_loc;
-  uint8_t* mtx_loc_shifted;
 	uint8_t* mtx_fns;
 } kbd_matrix_t;
 
