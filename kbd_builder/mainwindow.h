@@ -14,10 +14,10 @@ class MainWindow;
 
 typedef struct
 {
-    int                 m_keys_row[256];
-    int                 m_keys_col[256];
-    int                 m_alts_row[256];
-    int                 m_alts_col[256];
+    int                 m_keys_row[128];
+    int                 m_keys_col[128];
+    int                 m_alts_row[128];
+    int                 m_alts_col[128];
 } kbd_mtx_t;
 
 class MainWindow : public QMainWindow

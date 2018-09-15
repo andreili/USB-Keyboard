@@ -11,7 +11,7 @@ int keys_code[KEY_ROWS][KEY_COLS] =
      {0x35, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x2d, 0x2e, 0x2a, 0x49, 0x4a, 0x4b, 0x53, 0x54, 0x55, 0x56},
      {0x2b, 0x14, 0x1a, 0x08, 0x15, 0x17, 0x1c, 0x18, 0x0c, 0x12, 0x13, 0x2f, 0x30,   -1, 0x4c, 0x4d, 0x4e, 0x5f, 0x60, 0x61, 0x57},
      {0x39, 0x04, 0x16, 0x07, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x0f, 0x33, 0x34, 0x31, 0x28,   -1,   -1,   -1, 0x5c, 0x5d, 0x5e,   -1},
-     {0x102,0x1d, 0x1b, 0x06, 0x19, 0x05, 0x11, 0x10, 0x35, 0x37, 0x38,   -1,   -1,0x120,   -1, 0x52,   -1, 0x59, 0x5a, 0x5b, 0x58},
+     {0x102,0x1d, 0x1b, 0x06, 0x19, 0x05, 0x11, 0x10, 0x36, 0x37, 0x38,   -1,   -1,0x120,   -1, 0x52,   -1, 0x59, 0x5a, 0x5b, 0x58},
      {0x101,0x108,0x104,  -1,   -1,   -1,   -1, 0x2c,   -1,   -1,   -1,0x140,0x180,0x110, 0x50, 0x51, 0x4f, 0x62,   -1, 0x63,   -1}};
 QString keys_str[KEY_ROWS][KEY_COLS] =
     {{"Esc", "", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "PrnScr", "ScrlLock", "Pause", "", "", "", ""},
@@ -144,7 +144,7 @@ void MainWindow::on_actionOpen_triggered()
             for (int i=0 ; i<2 ; ++i)
             {
                 QJsonObject mtx = root[QString::number(i)].toObject();
-                for (int j=0 ; j<256 ; ++j)
+                for (int j=0 ; j<128 ; ++j)
                 {
                     if (mtx.contains(QString::number(j)))
                     {
@@ -196,7 +196,7 @@ void MainWindow::on_actionCyr_triggered()
 
 void MainWindow::on_actionNew_triggered()
 {
-    for (int i=0 ; i<256 ; ++i)
+    for (int i=0 ; i<128 ; ++i)
     {
         m_kbd_mtx[0].m_keys_row[i] = -1;
         m_kbd_mtx[0].m_keys_col[i] = -1;
@@ -224,15 +224,15 @@ void MainWindow::on_actionNew_triggered()
             QString::number(col) + "),";
 
 #define SAVE_MTX(idx, kname) \
-    lst.push_back(QString("const uint8_t kbd_" + name + "_" + kname + "[256] = {")); \
-    for (int i=0 ; i<32 ; ++i) \
+    lst.push_back(QString("const uint8_t kbd_" + name + "_" + kname + "[128] = {")); \
+    for (int i=0 ; i<16 ; ++i) \
     { \
         ln = "\t\t\t\t\t\t"; \
         for (int j=0 ; j<8 ; ++j) \
         { \
-            TO_MTX(m_kbd_mtx[idx].m_keys_row, m_kbd_mtx[idx].m_keys_col, i*16+j) \
+            TO_MTX(m_kbd_mtx[idx].m_keys_row, m_kbd_mtx[idx].m_keys_col, i*8+j) \
         } \
-        if (i == 31) \
+        if (i == 15) \
         { \
             ln.remove(ln.size() - 1, 1); \
             ln += "};"; \
@@ -246,6 +246,7 @@ void MainWindow::on_actionExport_header_triggered()
         return;
 
     QStringList fns = m_file.split("/");
+    QString path = m_file.left(m_file.lastIndexOf('/') + 1);
     QString name = fns[fns.size() - 1];
     name = name.left(name.lastIndexOf('.'));
 
@@ -259,7 +260,7 @@ void MainWindow::on_actionExport_header_triggered()
     lst.push_back("");
     SAVE_MTX(0, "lat");
     SAVE_MTX(1, "rus");
-    ln = "const uint8_t kbd_" + name + "_f[4] = {";
+    ln = "const uint8_t kbd_" + name + "_f[8] = {";
     for (int i=0 ; i<8 ; ++i)
     {
         TO_MTX(m_kbd_mtx[0].m_alts_row, m_kbd_mtx[0].m_alts_col, (m_alts[i] - 0x100))
@@ -269,9 +270,12 @@ void MainWindow::on_actionExport_header_triggered()
     lst.push_back(ln);
 
     lst.push_back(QString("kbd_matrix_t kbd_rk86 = {kbd_" + name + "_lat, kbd_" + name + "_rus, kbd_" + name + "_f};"));
+    lst.push_back("");
+    lst.push_back("#endif");
+    lst.push_back("");
 
-    name = m_file.left(m_file.lastIndexOf('.')) + ".h";
-    QFile f(name);
+    //name = m_file.left(m_file.lastIndexOf('.')) + ".h";
+    QFile f(path + "kbd_mtx_" + name + ".h");
     if (f.open(QIODevice::WriteOnly))
         for (int i=0 ; i<lst.length() ; ++i)
             f.write((lst[i] + "\n").toLatin1());
@@ -288,7 +292,7 @@ void MainWindow::save_to_file()
     for (int i=0 ; i<2 ; ++i)
     {
         QJsonObject mtx;
-        for (int j=0 ; j<256 ; ++j)
+        for (int j=0 ; j<128 ; ++j)
         {
             if (m_kbd_mtx[i].m_keys_row[j] != -1)
             {
@@ -318,7 +322,7 @@ void MainWindow::save_to_file()
 
 void MainWindow::update_ui()
 {
-    for (int i=0 ; i<256 ; ++i)
+    for (int i=0 ; i<128 ; ++i)
     {
         QAbstractButton* btn = m_buttons_container->button(i);
         int row = m_kbd_mtx[m_cur_mtx].m_keys_row[i];
