@@ -5,7 +5,7 @@
 #define USBH_MAX_NUM_INTERFACES         10
 #define USBH_MAX_NUM_CONFIGURATION      1
 #define USBH_KEEP_CFG_DESCRIPTOR        1
-#define USBH_MAX_NUM_SUPPORTED_CLASS    5
+#define USBH_MAX_NUM_SUPPORTED_CLASS    2
 #define USBH_MAX_SIZE_CONFIGURATION     256
 #define USBH_MAX_DATA_BUFFER            512
 #define USBH_DEBUG_LEVEL                5
@@ -15,9 +15,10 @@
 #define HOST_FS 		1
 
 #if (USBH_USE_OS == 1)
-  #include "cmsis_os.h"
-  #define USBH_PROCESS_PRIO          osPriorityNormal
-  #define USBH_PROCESS_STACK_SIZE    ((uint16_t)1024)
+    #define USBH_PROCESS_HS_PRIO          OS::pr0
+    #define USBH_PROCESS_HS_STACK_SIZE    ((uint16_t)1024)
+    #define USBH_PROCESS_FS_PRIO          OS::pr1
+    #define USBH_PROCESS_FS_STACK_SIZE    ((uint16_t)1024)
 #endif /* (USBH_USE_OS == 1) */
 
 #define USBH_malloc         malloc

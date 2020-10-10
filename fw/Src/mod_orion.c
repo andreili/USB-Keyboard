@@ -148,12 +148,17 @@ void orion_proc_loop()
 	{
 		WR_IDX(i);
 		WRITE_DBUS(kbd_data[i]);
+		__disable_irq();
 		WRN_PULSE();
+		__enable_irq();
 	}
+	WRITE_DBUS(0x7ff);
 }
 
 void orion_proc()
 {
+	RDN_STROBE_0();
+	RDN_1();
 	/*uint32_t rdata;
 	uint16_t vector;
 	GPIOE->ODR = 0xffff;
@@ -169,6 +174,6 @@ const kbd_proc_t proc_orion =
 {
 	.init = orion_init,
 	.proc = orion_proc_loop,
-	.interrupt = NULL,//orion_proc,
+	.interrupt = orion_proc,
 	.periodic = NULL
 };

@@ -1,26 +1,32 @@
 #include "updater.h"
 #include "stm32_inc.h"
-#define LED1_PIN GPIO_PIN_8
-#define LED2_PIN GPIO_PIN_9
-#define LED3_PIN GPIO_PIN_10
+#include "fatfs.h"
+#include "xprintf.h"
+#include "sddriver.h"
+#define LED1_PIN STM32_GPIO::PIN_8
+#define LED2_PIN STM32_GPIO::PIN_9
+#define LED3_PIN STM32_GPIO::PIN_10
+
+#ifdef STM32_USE_UART
 
 FATFS SDFatFS;
+extern TCHAR SD_path[4];
 
-#define FW_START_ADDR (FLASH_BASE + 0x4000)
+#define FW_START_ADDR (FLASH_BASE + 0x8000)
 #define FW_VERSION_ADDR (FLASH_BASE + 0x7ff00)
-#define FW_VERSION (*((uint32_t*)FW_VERSION_ADDR))
+#define FW_VERSION (*(reinterpret_cast<uint32_t*>(FW_VERSION_ADDR)))
 
 #define CRC32_POLY_R 0xEDB88320
 static uint32_t crc32r_table[256];
 
 #define FW_BUF_SIZE 1024
 uint8_t fw_read_buf[FW_BUF_SIZE];
-#define FW_START_SECTOR 1
-#define FW_SECTORS_COUNT 6
+#define FW_START_SECTOR 2
+#define FW_SECTORS_COUNT 10
 
 void crc32_init(void)
 {
-    int i, j;
+    uint32_t i, j;
     uint32_t cr;
     for (i = 0; i < 256; ++i)
     {
@@ -51,7 +57,7 @@ void fw_write(uint8_t* buf, uint32_t size, uint32_t start_addr)
 
     while (fw_offs < size)
     {
-        uint32_t fw_dw = *((uint32_t*)&buf[fw_offs]);
+        uint32_t fw_dw = *(reinterpret_cast<uint32_t*>(&buf[fw_offs]));
         STM32_FLASH::unlock();
         STM32_FLASH::program(FLASH_TypeProgram::WORD, start_addr, fw_dw);
         STM32_FLASH::lock();
@@ -63,14 +69,17 @@ void fw_write(uint8_t* buf, uint32_t size, uint32_t start_addr)
 bool apply_updates()
 {
     FIL f;
-    if (f_open(&f, "1:/usb_keyb.bin.sign", FA_READ) != FR_OK)
+    if (f_open(&f, "usb_keyb.bin.sign", FA_READ) != FR_OK)
+    {
+        uart6.send_str("Unable to open file 'usb_keyb.bin.sign'!\n\r", TXRX_MODE::DIRECT);
         return false;
+    }
 
     uint32_t version, crc32;
     f_read(&f, &version, sizeof(uint32_t), nullptr);
     f_read(&f, &crc32, sizeof(uint32_t), nullptr);
     f_close(&f);
-    xprintf("Finded version %d, current version is %d\n\r", version, FW_VERSION);
+    xprintf("Found version %d, current version is %d\n\r", version, FW_VERSION);
 
     // check version
     if (FW_VERSION != version)
@@ -100,7 +109,7 @@ bool apply_updates()
     do
     {
         f_read(&f, fw_read_buf, FW_BUF_SIZE, &fw_readed);
-        crc32_new = crc32_byte(crc32_new, fw_read_buf, fw_readed);
+        crc32_new = crc32_byte(crc32_new, fw_read_buf, static_cast<int>(fw_readed));
         fw_write(fw_read_buf, FW_BUF_SIZE, fw_offset);
         fw_offset += FW_BUF_SIZE;
         fw_size += fw_readed;
@@ -115,15 +124,19 @@ bool apply_updates()
     }
 
     xprintf("Readed firmware (%d bytes), version #%d\n\r", fw_size, version);
-    fw_write((uint8_t*)&version, sizeof(uint32_t), FW_VERSION_ADDR);
+    fw_write(reinterpret_cast<uint8_t*>(&version), sizeof(uint32_t), FW_VERSION_ADDR);
 
     return true;
 }
 
 void check_updates()
 {
+  /*  debug_fn();
+#ifdef STM32_USE_SD
     if (!STM32_FATFS_DRIVER::is_card_present())
+#endif
         uart6.send_str("SD-card was not detected, skipping initialization of FATFs\n\r", TXRX_MODE::INTERRUPT);
+#ifdef STM32_USE_SD
     else
     {
         FAT_FS::init();
@@ -133,10 +146,13 @@ void check_updates()
             uart6.send_str("Unable to mount FAT partition! Check SD-card!\n", TXRX_MODE::INTERRUPT);
             STM32_SYSTICK::delay(1000);
         }
-        uart6.send_str("FAT partition mounted\n\rCheck for updates...\n\r", TXRX_MODE::INTERRUPT);
+        uart6.send_str("FAT partition mounted\n\rCheck for updates...\n\r", TXRX_MODE::DIRECT);
         if (apply_updates())
             uart6.send_str("All updated!\n\r", TXRX_MODE::INTERRUPT);
         else
             uart6.send_str("Nothing to update.\n\r", TXRX_MODE::INTERRUPT);
     }
+#endif*/
 }
+
+#endif //STM32_USE_UART
